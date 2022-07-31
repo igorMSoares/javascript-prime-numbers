@@ -97,8 +97,7 @@ Ou então, importar o arquivo javascript *primeNumbers.js* e rodar as funções 
   >> "O número 2347 é primo."
 
   verificaNumeroPrimo("uma string");
-  >> "Entrada inválida.
-Apenas números inteiros positivos serão computados."
+  >> "Entrada inválida. Apenas números inteiros positivos serão computados."
   ```
 
 - ###### *validate(num):*
