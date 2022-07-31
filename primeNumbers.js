@@ -19,7 +19,6 @@ function isPrimeNumber(number) {
         numbersList = numbersList.filter((n) => !multipleOf(num,n));
       }
     }
-
   }
 
   return true; // numbersList.length === 0
@@ -36,9 +35,18 @@ function generatePrimes(from, to, listType="string") {
   if (!validate(to)[0]) { return validate(to)["message"]; }
 
   var primes = [];
+  if (from === 0 || from === 1) { from = 2; }
+
   for (let i=from; i<= to; i++) {
-    if (isPrimeNumber(i)) {
-      primes.push(i);
+    primes.push(i);
+  }
+  var sqrt = Math.floor(Math.sqrt(to));
+
+  for (let i = 0 ; i < primes.length; i++) {
+    let num = primes[i];
+    if (isPrimeNumber(num)) {
+      primes = primes.filter((n) => !multipleOf(num,n));
+      primes.unshift(num);
     }
   }
 

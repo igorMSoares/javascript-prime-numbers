@@ -31,7 +31,7 @@ proporcional a *Nlog(logN)*, o uso de memória se torna excessivo para
 números com mais de **16 dígitos**.
 
 Em um notebook com
-processador Dual Core 3GHz, levou 2 minutos e 40 segundos para
+processador Dual Core 3GHz, levou 2 minutos e 30 segundos para
 gerar uma lista de números primos de 2 até 1 milhão, usando a função [*generatePrimes(from, to)*](#user-content-generate-primes) que itera chamadas à função de teste [*isPrimeNumber(number)*](#user-content-is-prime-number).
 
 
