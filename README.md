@@ -42,11 +42,11 @@ gerar uma lista de números primos de 2 até 1 milhão, usando a função [*gene
 
 - **Opção 2:** Importar o arquivo javascript *primeNumbers.js* e rodar as funções da forma como você preferir.
 
-```html
-<!-- importar o arquivo direto do repositório remoto: -->
-<script src="https://iguhsoares.github.io/javascript-prime-numbers/primeNumbers.js"></script>
+  ```html
+  <!-- importar o arquivo direto do repositório remoto: -->
+  <script src="https://iguhsoares.github.io/javascript-prime-numbers/primeNumbers.js"></script>
 
-```
+  ```
 
 **To-do:** Interface Web para rodar as funções de forma mais user friendly.
 
