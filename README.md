@@ -38,9 +38,9 @@ gerar uma lista de números primos de 2 até 1 milhão, usando a função [*gene
 ### Como usar
 -----------
 
-Abrir o arquivo *index.html* no navegador e usar o console do browser para chamar as funções.
+- **Opção 1:** Acesse [aqui](https://iguhsoares.github.io/javascript-prime-numbers/) a página do repositório e use o console do browser para chamar as funções.
 
-Ou então, importar o arquivo javascript *primeNumbers.js* e rodar as funções da forma como você preferir.
+- **Opção 2:** Importar o arquivo javascript *primeNumbers.js* e rodar as funções da forma como você preferir.
 
 ```html
 <!-- importar o arquivo direto do repositório remoto: -->
