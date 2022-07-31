@@ -32,7 +32,7 @@ números com mais de **16 dígitos**.
 
 Em um notebook com
 processador Dual Core 3GHz, levou 2 minutos e 30 segundos para
-gerar uma lista de números primos de 2 até 1 milhão, usando a função [*generatePrimes(from, to)*](#user-content-generate-primes) que itera chamadas à função de teste [*isPrimeNumber(number)*](#user-content-is-prime-number).
+gerar uma lista de números primos de 2 até 1 milhão, usando a função [*generatePrimes(from, to)*](#generate-primes) que itera chamadas à função de teste [*isPrimeNumber(number)*](#is-prime-number).
 
 
 ### Como usar
@@ -93,7 +93,7 @@ gerar uma lista de números primos de 2 até 1 milhão, usando a função [*gene
   ```
 
 - ###### *verificaNumeroPrimo(num):*
-  Um wrapper para a função *isPrimeNumber()*, com mensagem user friendly (em português) e fazendo validação do parâmetro *num* antes de chamar a função [*isPrimeNumber()*](#user-content-is-prime-number).
+  Um wrapper para a função *isPrimeNumber()*, com mensagem user friendly (em português) e fazendo validação do parâmetro *num* antes de chamar a função [*isPrimeNumber()*](#is-prime-number).
 
   ```Javascript
   verificaNumeroPrimo(1199);
