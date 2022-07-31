@@ -49,6 +49,7 @@ Ou então, importar o arquivo javascript *primeNumbers.js* e rodar as funções 
 ----------
 
 - <h6 id="is-prime-number"><i>isPrimeNumber(number)</i>:</h6>
+
   Recebe um número inteiro positivo e retorna *true* se for primo ou *false* se for composto.
 
     - O parâmetro *number* deve ser validado antes da chamada da função, para garantir que a função não receberá um parâmetro inválido. (Por ser uma função recursiva optei por fazer o tratamento antes da chamada da função.)
