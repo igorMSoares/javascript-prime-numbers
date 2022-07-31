@@ -42,6 +42,12 @@ Abrir o arquivo *index.html* no navegador e usar o console do browser para chama
 
 Ou então, importar o arquivo javascript *primeNumbers.js* e rodar as funções da forma como você preferir.
 
+```html
+<!-- importar o arquivo direto do repositório remoto: -->
+<script src="https://iguhsoares.github.io/javascript-prime-numbers/primeNumbers.js"></script>
+
+```
+
 **To-do:** Interface Web para rodar as funções de forma mais user friendly.
 
 
