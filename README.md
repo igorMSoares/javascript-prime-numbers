@@ -87,7 +87,7 @@ Ou então, importar o arquivo javascript *primeNumbers.js* e rodar as funções 
   ```
 
 - ###### *verificaNumeroPrimo(num):*
-  Um wrapper para a função *isPrimeNumber()*, com mensagem user friendly (em português) e fazendo validação do parâmetro *num* antes de chamar a função *isPrimeNumber()*.
+  Um wrapper para a função *isPrimeNumber()*, com mensagem user friendly (em português) e fazendo validação do parâmetro *num* antes de chamar a função [*isPrimeNumber()*](#user-content-is-prime-number).
 
   ```Javascript
   verificaNumeroPrimo(1199);
