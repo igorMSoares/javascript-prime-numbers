@@ -92,7 +92,7 @@ function generatePrimeNumbersList(from, to, outputType="string") {
     from = to;
     to = tmp;
   }
-  if ([0,1,2].includes(from)) { return verifyPrimeNumber(0, to); }
+  if ([0,1,2].includes(from)) { return verifyPrimeNumber(0, to, outputType); }
 
   var list1 = verifyPrimeNumber(0, from, "array");
   var list2 = verifyPrimeNumber(0, to, "array");
