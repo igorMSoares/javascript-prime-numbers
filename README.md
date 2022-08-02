@@ -28,11 +28,11 @@ número primo.
 
 Dada a característica recursiva desse algoritmo, apesar da eficiência
 proporcional a *Nlog(logN)*, o uso de memória se torna excessivo para
-números com mais de **16 dígitos**.
+números com mais de **8 dígitos**.
 
 Em um notebook com
-processador Dual Core 3GHz, levou 2 minutos e 30 segundos para
-gerar uma lista de números primos de 2 até 1 milhão, usando a função [*generatePrimes(from, to)*](#generate-primes) que itera chamadas à função de teste [*isPrimeNumber(number)*](#is-prime-number).
+processador Dual Core 3GHz, levou menos de **7 segundos** para
+gerar uma lista com os **664.579** números primos de 2 até 10 milhões, usando a função [*generatePrimeNumbersList(from, to)*](#generate-primes).
 
 
 ### Como usar
@@ -40,7 +40,7 @@ gerar uma lista de números primos de 2 até 1 milhão, usando a função [*gene
 
 - **Opção 1:** Acesse [aqui](https://iguhsoares.github.io/javascript-prime-numbers/) a página do repositório e use o console web do seu navegador para chamar as funções.
 
-  ![Usando as funções a partir do console web](https://i.imgur.com/LAb9dDY.png)
+  ![Usando as funções a partir do console web](https://i.imgur.com/v4Bgh1h.png)
 
 - **Opção 2:** Importar o arquivo javascript *primeNumbers.js* e rodar as funções da forma como você preferir.
 
@@ -56,18 +56,26 @@ gerar uma lista de números primos de 2 até 1 milhão, usando a função [*gene
 ### Documentação
 ----------
 
-- <h6 id="is-prime-number"><i>isPrimeNumber(number)</i>:</h6>
+- <h6 id="is-prime-number"><i>verifyPrimeNumber(number, upTo=null, outputType="string")</i>:</h6>
 
-  Recebe um número inteiro positivo e retorna *true* se for primo ou *false* se for composto.
-
-    - O parâmetro *number* deve ser validado antes da chamada da função, para garantir que a função não receberá um parâmetro inválido. (Por ser uma função recursiva optei por fazer o tratamento antes da chamada da função.)
+  Se o parâmetro *upTo* for omitido, a função devolve *true* se *number* for primo ou *false* caso contrário.
 
   ```Javascript
-  isPrimeNumber(13);
+  verifyPrimeNumber(13);
   >> true
 
-  isPrimeNumber(10);
+  verifyPrimeNumber(10);
   >> false
+  ```
+
+  Caso seja passado um número inteiro positivo **N** no segundo parâmetro, a função retorna uma lista com os **N** primeiros números primos. O tipo de retorno pode ser alterado para "array" no terceiro parâmetro.
+
+  ```Javascript
+  verifyPrimeNumber(0,10);
+  >> "2, 3, 5, 7"
+
+  verifyPrimeNumber(0,10,"array");
+  >> Array(4) [ 2, 3, 5, 7 ]
   ```
 
 - ###### *multipleOf(num1, num2):*
@@ -81,21 +89,21 @@ gerar uma lista de números primos de 2 até 1 milhão, usando a função [*gene
   >> false
   ```
 
-- <h6 id="generate-primes"><i>generatePrimes(from, to, listType="string")</i></h6>
+- <h6 id="generate-primes"><i>generatePrimeNumbersList(from, to, outputType="string")</i></h6>
 
   Gera uma lista de números primos maiores ou iguais a **from** e menores ou iguais a **to**.
-  - Por default, retorna a lista no formato *string*. Caso qualquer outro valor seja passado em *listType*, a lista retornada será um *Array*.
+  - Por default, retorna a lista no formato *string*, a menos que especificado <i>"array"</i> no terceiro parâmetro.
 
   ```Javascript
-  generatePrimes(0,100);
-  >> "2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97"
+  generatePrimeNumbersList(20, 50);
+  >> "23, 29, 31, 37, 41, 43, 47"
 
-  generatePrimes(0,20,[]);
-  >> [ 2, 3, 5, 7, 11, 13, 17, 19 ]
+  generatePrimeNumbersList(20, 50, "array");
+  >> Array(7) [ 23, 29, 31, 37, 41, 43, 47 ]
   ```
 
 - ###### *verificaNumeroPrimo(num):*
-  Um wrapper para a função *isPrimeNumber()*, com mensagem user friendly (em português) e fazendo validação do parâmetro *num* antes de chamar a função [*isPrimeNumber()*](#is-prime-number).
+  Um wrapper para a função [*verifyPrimeNumber()*](#is-prime-number), com mensagem em português.
 
   ```Javascript
   verificaNumeroPrimo(1199);
@@ -103,9 +111,6 @@ gerar uma lista de números primos de 2 até 1 milhão, usando a função [*gene
 
   verificaNumeroPrimo(2347);
   >> "O número 2347 é primo."
-
-  verificaNumeroPrimo("uma string");
-  >> "Entrada inválida. Apenas números inteiros positivos serão computados."
   ```
 
 - ###### *validate(num):*
@@ -119,3 +124,6 @@ gerar uma lista de números primos de 2 até 1 milhão, usando a função [*gene
   validate("qualquer outra coisa");
   >> { 0: false, message: "Entrada inválida.\nApenas números inteiros positivos serão computados." }
   ```
+
+- ###### *InvalidArgumentException(message):*
+  Usada internamente para lançar uma *InvalidArgumentException*, no caso de alguma função receber um argumento inválido.
