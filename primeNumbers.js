@@ -2,11 +2,7 @@ function multipleOf(num1, num2) {
   return Math.max(num1, num2) % Math.min(num1, num2) === 0 ? true : false;
 }
 
-function isPrimeNumber(number, primesList = false) {
-  console.log(`Inicio: ${number}`);
-  if (primesList) {
-    console.log([...primesList]);
-  }
+function isPrimeNumber(number, generateList = false, primesList = false) {
   if (Number.isNaN(number)) {
     if (typeof number === 'string') {
       number = parseInt(number);
@@ -15,46 +11,52 @@ function isPrimeNumber(number, primesList = false) {
     }
   }
 
-  if (number <= 1 || (number !== 2 && number % 2 === 0)) {
+  if (number <= 1) {
+    return false;
+  }
+  if (!generateList && number !== 2 && number % 2 === 0) {
     return false;
   }
 
   primesList = primesList || new Set();
-  //  primesList.add(2);
 
-  let numbersToTest = [];
+  let numbersToTest = [2];
   for (let n = 3; n <= number; n += 2) {
     numbersToTest.push(n);
   }
   if (numbersToTest.length === 0) {
+    if (!generateList) {
+      return true;
+    }
     primesList.add(number);
   }
 
   let limit = number ** 0.5;
-
-  console.log({ limit });
-  console.log({ numbersToTest });
   for (let i = 0; numbersToTest[i] <= limit; i++) {
     let num = numbersToTest[i];
-    console.log({ num });
-    if (primesList.has(num) || isPrimeNumber(num, primesList)) {
-      if (primesList.has(num)) {
-        console.log('cache dentro do for');
+    if (primesList.has(num) || isPrimeNumber(num, true, primesList)) {
+      if (!generateList && multipleOf(num, number)) {
+        return false;
       }
       primesList.add(num);
       numbersToTest = numbersToTest.filter(n => !multipleOf(n, num));
-      console.log(`num: ${num}`);
-      console.log(numbersToTest);
       i = -1;
     }
   }
   primesList = new Set([...primesList, ...numbersToTest]);
 
+  let isPrime = false;
   if (primesList.has(number)) {
-    return [true, primesList];
+    isPrime = true;
   }
-  return [false, primesList];
+  if (generateList) {
+    // return [isPrime, [...primesList]];
+    return [...primesList];
+  } else {
+    return isPrime;
+  }
 }
+module.exports = { isPrimeNumber };
 
 function verifyPrimeNumber(number, upTo = null, outputType = 'string') {
   if (!['array', 'string'].includes(outputType)) {
