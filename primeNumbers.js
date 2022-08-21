@@ -2,7 +2,10 @@ function multipleOf(num1, num2) {
   return Math.max(num1, num2) % Math.min(num1, num2) === 0 ? true : false;
 }
 
+const arrayToMap = array => array.reduce((a, v) => ({ ...a, [v]: v }), {});
+
 function isPrimeNumber(number, generateList = false, primesList = false) {
+  // console.error('count');
   if (Number.isNaN(number)) {
     if (typeof number === 'string') {
       number = parseInt(number);
@@ -24,22 +27,17 @@ function isPrimeNumber(number, generateList = false, primesList = false) {
   for (let n = 3; n <= number; n += 2) {
     numbersToTest.push(n);
   }
-  if (numbersToTest.length === 0) {
-    if (!generateList) {
-      return true;
-    }
-    primesList[number] = number;
-  }
 
   let limit = number ** 0.5;
   for (let i = 0; numbersToTest[i] <= limit; i++) {
+    // console.log({ numbersToTest });
     let num = numbersToTest[i];
     if (primesList[num] || isPrimeNumber(num, true, primesList)) {
-      if (primesList[num]) {
-        console.log('isPrimeNumber cache');
-      } else {
-        console.log('recursão');
-      }
+      // if (primesList[num]) {
+      //   console.log('isPrimeNumber cache');
+      // } else {
+      //   console.log('recursão');
+      // }
       if (!generateList && multipleOf(num, number)) {
         return false;
       }
@@ -48,46 +46,58 @@ function isPrimeNumber(number, generateList = false, primesList = false) {
       i = -1;
     }
   }
-  primesList = new Set([...Object.values(primesList), ...numbersToTest]);
+  // console.log([...Object.values(primesList), ...numbersToTest]);
+  primesList = { ...primesList, ...arrayToMap(numbersToTest) };
+  // primesList = new Set([...Object.values(primesList), ...numbersToTest]);
 
   let isPrime = false;
-  if (primesList.has(number)) {
+  if (primesList[number]) {
     isPrime = true;
   }
   if (generateList) {
-    return [isPrime, [...primesList]];
+    return [isPrime, primesList];
     // return [...primesList];
   } else {
     return isPrime;
   }
 }
-// module.exports = { isPrimeNumber, cachedPrimes };
 
 const memoizePrimes = () => {
   let primeNumbersCache = {};
 
-  return number => {
+  return (number, generateList = false) => {
     if (primeNumbersCache[number]) {
-      console.log(`cached: ${number}`);
-      return true;
+      // console.log(`cached: ${number}`);
+      return [true, primeNumbersCache];
     } else {
       let primesArray = Object.values(primeNumbersCache);
       let lastPrime = primesArray.pop();
 
       if (lastPrime && number < lastPrime) {
-        return false;
+        return [false, primeNumbersCache];
       }
     }
 
     let result = isPrimeNumber(number, true, primeNumbersCache);
     // if (result[0] === true) {
     // }
-    primeNumbersCache = result[1].reduce((a, v) => ({ ...a, [v]: v }), {});
-    console.log(primeNumbersCache);
+    primeNumbersCache = result[1];
+    // console.log(primeNumbersCache);
     return result;
   };
 };
+
+const primeNumbersUpTo = number => {
+  let resultMap = cachedPrimes(number, true)[1];
+  let primesArray = Object.values(resultMap);
+
+  return primesArray.filter(n => n <= number);
+};
+
 const cachedPrimes = memoizePrimes();
+
+// module.exports = { isPrimeNumber, cachedPrimes, arrayToMap, primeNumbersUpTo };
+
 function verifyPrimeNumber(number, upTo = null, outputType = 'string') {
   if (!['array', 'string'].includes(outputType)) {
     throw new InvalidArgumentException(
