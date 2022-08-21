@@ -18,7 +18,7 @@ function isPrimeNumber(number, generateList = false, primesList = false) {
     return false;
   }
 
-  primesList = primesList || new Set();
+  primesList = primesList || {};
 
   let numbersToTest = [2];
   for (let n = 3; n <= number; n += 2) {
@@ -28,36 +28,66 @@ function isPrimeNumber(number, generateList = false, primesList = false) {
     if (!generateList) {
       return true;
     }
-    primesList.add(number);
+    primesList[number] = number;
   }
 
   let limit = number ** 0.5;
   for (let i = 0; numbersToTest[i] <= limit; i++) {
     let num = numbersToTest[i];
-    if (primesList.has(num) || isPrimeNumber(num, true, primesList)) {
+    if (primesList[num] || isPrimeNumber(num, true, primesList)) {
+      if (primesList[num]) {
+        console.log('isPrimeNumber cache');
+      } else {
+        console.log('recursão');
+      }
       if (!generateList && multipleOf(num, number)) {
         return false;
       }
-      primesList.add(num);
+      primesList[num] = num;
       numbersToTest = numbersToTest.filter(n => !multipleOf(n, num));
       i = -1;
     }
   }
-  primesList = new Set([...primesList, ...numbersToTest]);
+  primesList = new Set([...Object.values(primesList), ...numbersToTest]);
 
   let isPrime = false;
   if (primesList.has(number)) {
     isPrime = true;
   }
   if (generateList) {
-    // return [isPrime, [...primesList]];
-    return [...primesList];
+    return [isPrime, [...primesList]];
+    // return [...primesList];
   } else {
     return isPrime;
   }
 }
-module.exports = { isPrimeNumber };
+// module.exports = { isPrimeNumber, cachedPrimes };
 
+const memoizePrimes = () => {
+  let primeNumbersCache = {};
+
+  return number => {
+    if (primeNumbersCache[number]) {
+      console.log(`cached: ${number}`);
+      return true;
+    } else {
+      let primesArray = Object.values(primeNumbersCache);
+      let lastPrime = primesArray.pop();
+
+      if (lastPrime && number < lastPrime) {
+        return false;
+      }
+    }
+
+    let result = isPrimeNumber(number, true, primeNumbersCache);
+    // if (result[0] === true) {
+    // }
+    primeNumbersCache = result[1].reduce((a, v) => ({ ...a, [v]: v }), {});
+    console.log(primeNumbersCache);
+    return result;
+  };
+};
+const cachedPrimes = memoizePrimes();
 function verifyPrimeNumber(number, upTo = null, outputType = 'string') {
   if (!['array', 'string'].includes(outputType)) {
     throw new InvalidArgumentException(
