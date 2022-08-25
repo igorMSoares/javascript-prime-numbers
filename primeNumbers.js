@@ -2,13 +2,7 @@ function multipleOf(num1, num2) {
   return Math.max(num1, num2) % Math.min(num1, num2) === 0 ? true : false;
 }
 
-const arrayToMap = array => array.reduce((a, v) => ({ ...a, [v]: v }), {});
-const arrayToMapV2 = array => {
-  let obj = {};
-  array.map(n => (obj[n] = n));
-  return obj;
-};
-const arrayToMapV3 = array => {
+const arrayToObject = array => {
   let obj = {};
   for (let n of array.values()) {
     obj[n] = n;
@@ -16,7 +10,7 @@ const arrayToMapV3 = array => {
   return obj;
 };
 
-function isPrimeNumber(number, generateList = false, primesList = false) {
+function testPrimality(number, exportPrimesList = false, primesList = false) {
   if (Number.isNaN(number)) {
     if (typeof number === 'string') {
       number = parseInt(number);
@@ -28,7 +22,7 @@ function isPrimeNumber(number, generateList = false, primesList = false) {
   if (number <= 1) {
     return false;
   }
-  if (!generateList && number !== 2 && number % 2 === 0) {
+  if (!exportPrimesList && number !== 2 && number % 2 === 0) {
     return false;
   }
 
@@ -39,11 +33,12 @@ function isPrimeNumber(number, generateList = false, primesList = false) {
     numbersToTest.push(n);
   }
 
-  let limit = Math.floor(number ** 0.5);
+  let limit = number ** 0.5;
   for (let i = 0; numbersToTest[i] <= limit; i++) {
     let num = numbersToTest[i];
-    if (primesList[num] || isPrimeNumber(num, true, primesList)) {
-      if (!generateList && multipleOf(number, num)) {
+
+    if (primesList[num] || testPrimality(num, true, primesList)) {
+      if (!exportPrimesList && multipleOf(number, num)) {
         return false;
       }
       primesList[num] = num;
@@ -52,153 +47,50 @@ function isPrimeNumber(number, generateList = false, primesList = false) {
     }
   }
 
-  primesList = { ...primesList, ...arrayToMapV2(numbersToTest) };
+  primesList = { ...primesList, ...arrayToObject(numbersToTest) };
 
-  let isPrime = false;
-  if (primesList[number]) {
-    isPrime = true;
-  }
-  if (generateList) {
-    return [isPrime, primesList];
-  } else {
-    return isPrime;
-  }
-}
-function isPrimeNumberV3(number, generateList = false, primesList = false) {
-  if (Number.isNaN(number)) {
-    if (typeof number === 'string') {
-      number = parseInt(number);
-    } else {
-      throw 'Invalid type error';
-    }
-  }
+  let isPrime = primesList[number] ? true : false;
 
-  if (number <= 1) {
-    return false;
-  }
-  if (!generateList && number !== 2 && number % 2 === 0) {
-    return false;
-  }
-
-  primesList = primesList || {};
-
-  let numbersToTest = [2];
-  for (let n = 3; n <= number; n += 2) {
-    numbersToTest.push(n);
-  }
-
-  let limit = Math.floor(number ** 0.5);
-  for (let i = 0; numbersToTest[i] <= limit; i++) {
-    let num = numbersToTest[i];
-    if (primesList[num] || isPrimeNumberV3(num, true, primesList)) {
-      if (!generateList && multipleOf(number, num)) {
-        return false;
-      }
-      primesList[num] = num;
-      numbersToTest = numbersToTest.filter(n => !multipleOf(num, n));
-      i = -1;
-    }
-  }
-
-  primesList = { ...primesList, ...arrayToMapV3(numbersToTest) };
-
-  let isPrime = false;
-  if (primesList[number]) {
-    isPrime = true;
-  }
-  if (generateList) {
-    return [isPrime, primesList];
-  } else {
-    return isPrime;
-  }
+  return exportPrimesList ? { isPrime, primesList } : isPrime;
 }
 
-function isPrimeNumberV2(number, generateList = false, primesList = false) {
-  if (Number.isNaN(number)) {
-    if (typeof number === 'string') {
-      number = parseInt(number);
-    } else {
-      throw 'Invalid type error';
-    }
-  }
-
-  if (number <= 1) {
-    return false;
-  }
-  if (!generateList && number !== 2 && number % 2 === 0) {
-    return false;
-  }
-
-  primesList = primesList || {};
-
-  let numbersMap = { 2: 2 };
-  let numbersToTest = [2];
-  for (let n = 3; n <= number; n += 2) {
-    numbersToTest.push(n);
-    numbersMap[n] = n;
-  }
-
-  let limit = Math.floor(number ** 0.5);
-  for (let i = 0; numbersToTest[i] <= limit; i++) {
-    let num = numbersToTest[i];
-    if (primesList[num] || isPrimeNumberV2(num, false, primesList)) {
-      if (!generateList && multipleOf(number, num)) {
-        return false;
-      }
-      primesList[num] = num;
-      numbersToTest.map((n, i) => {
-        if (multipleOf(num, n)) {
-          numbersToTest.splice(i, 1);
-          delete numbersMap[n];
-        }
-      });
-      i = -1;
-    }
-  }
-  primesList = { ...primesList, ...numbersMap };
-
-  let isPrime = false;
-  if (primesList[number]) {
-    isPrime = true;
-  }
-  if (generateList) {
-    return [isPrime, primesList];
-  } else {
-    return isPrime;
-  }
-}
-const memoizePrimes = () => {
+const memoizePrimesList = () => {
   let primeNumbersCache = {};
 
-  return (number, generateList = false) => {
-    if (primeNumbersCache[number]) {
-      return [true, primeNumbersCache];
-    } else {
-      let primesArray = Object.values(primeNumbersCache);
-      let lastPrime = primesArray.pop();
+  return number => {
+    let result = { primesList: primeNumbersCache };
 
-      if (lastPrime && number < lastPrime) {
-        return [false, primeNumbersCache];
+    if (primeNumbersCache[number]) {
+      result.isPrime = true;
+    } else {
+      let lastPrimeInTheList = Object.values(primeNumbersCache).pop();
+
+      if (lastPrimeInTheList && number < lastPrimeInTheList) {
+        result.isPrime = false;
       }
     }
 
-    let result = isPrimeNumberV3(number, true, primeNumbersCache);
-    primeNumbersCache = result[1];
+    if (result.isPrime !== undefined) {
+      return result;
+    }
+
+    result = testPrimality(number, true, primeNumbersCache);
+    primeNumbersCache = result.primesList;
     return result;
   };
 };
 
+const cachedPrimes = memoizePrimesList();
+
 const primeNumbersUpTo = number => {
-  let resultMap = cachedPrimes(number, true)[1];
-  let primesArray = Object.values(resultMap);
+  let primesList = cachedPrimes(number).primesList;
 
-  return primesArray.filter(n => n <= number);
+  return Object.values(primesList).filter(n => n <= number);
 };
-
-const cachedPrimes = memoizePrimes();
 
 const setsDifference = (setA, setB) => {
   let result = new Set(setA);
+
   for (let n of setB) {
     if (setA.has(n)) {
       result.delete(n);
@@ -206,6 +98,7 @@ const setsDifference = (setA, setB) => {
       result.add(n);
     }
   }
+
   return result;
 };
 
@@ -216,13 +109,17 @@ function primeNumbersListBetween(from, to) {
   let result = [...setsDifference(list1, list2)];
   let min = Math.min(from, to);
 
-  if (cachedPrimes(min)[0]) {
+  if (cachedPrimes(min).isPrime) {
     result.unshift(min);
   }
+
   return result;
 }
 
 function firstNPrimes(number) {
+  if (number === 0) {
+    return [];
+  }
   let digits = (number + '').length;
   let factor = 3 * 2 ** (digits - 1);
 
@@ -231,30 +128,27 @@ function firstNPrimes(number) {
   return listOfPrimes;
 }
 
-// module.exports = {
-//   isPrimeNumberV2,
-//   isPrimeNumberV3,
+module.exports = {
+  testPrimality,
+  primeNumbersUpTo,
+  cachedPrimes,
+  primeNumbersListBetween,
+  firstNPrimes,
+};
+
+// export {
+//   firstNPrimes,
+//   primeNumbersListBetween,
 //   isPrimeNumber,
+//   isPrimeNumberV2,
+//   testPrimality as isPrimeNumberV3,
 //   cachedPrimes,
 //   arrayToMap,
 //   arrayToMapV2,
-//   arrayToMapV3,
+//   arrayToObject as arrayToMapV3,
 //   primeNumbersUpTo,
+//   verifyPrimeNumber,
 // };
-
-export {
-  firstNPrimes,
-  primeNumbersListBetween,
-  isPrimeNumber,
-  isPrimeNumberV2,
-  isPrimeNumberV3,
-  cachedPrimes,
-  arrayToMap,
-  arrayToMapV2,
-  arrayToMapV3,
-  primeNumbersUpTo,
-  verifyPrimeNumber,
-};
 
 function verifyPrimeNumber(number, upTo = null, outputType = 'string') {
   if (!['array', 'string'].includes(outputType)) {
