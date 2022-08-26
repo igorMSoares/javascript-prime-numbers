@@ -37,13 +37,13 @@ class Message {
   }
 }
 
-function validateInput(value) {
+function validateInput(value, message = 'Digite um número inteiro positivo.') {
   let parsedValue = parseInt(value);
 
   try {
     isValidNumber(parsedValue);
   } catch (error) {
-    throw new InvalidArgumentError(`Digite um número inteiro positivo.`);
+    throw new InvalidArgumentError(message);
   }
 
   return parsedValue;
@@ -51,7 +51,21 @@ function validateInput(value) {
 
 const getNumberInput = elementSelector => $(elementSelector).val();
 
-const handleInputChange = (elementSelector, fn) => {
+/**
+ * Encapsulates operations performed on input change
+ *
+ * @function handleInputChange
+ * @typedef {Object} jQuerySelector -
+ *  Any valid Selector, as a string or a DOM Element
+ * @typedef {Object} jQuery -
+ *  Objets created using jQuery() or $()
+ * @params {jQuerySelector|jQuerySelector[]} elementSelector -
+ *  If there's more than one input to handle,
+ *  they're passed as an array of Selectors
+ * @params {function (number,[number],jQuery):string} fn -
+ *  Callback function wich performs actual operations with the input value
+ */
+function handleInputChange(elementSelector, fn) {
   let inputArray = [];
   let inputName = undefined;
 
@@ -59,13 +73,10 @@ const handleInputChange = (elementSelector, fn) => {
     for (let element of elementSelector) {
       inputArray.push(getNumberInput(element));
     }
-    inputName = $(elementSelector[0])
-      .parent()
-      .attr('for')
-      .split('-from-input')[0];
+    inputName = $(elementSelector[0]).attr('name').split(/-\w*$/)[0];
   } else {
     inputArray.push(getNumberInput(elementSelector));
-    inputName = $(elementSelector).parent().attr('for').split('-input')[0];
+    inputName = $(elementSelector).attr('name');
   }
 
   let resultArea = $(`p[id*="${inputName}"].js-result`);
@@ -73,17 +84,21 @@ const handleInputChange = (elementSelector, fn) => {
   if (inputArray.some(value => value === '')) {
     resultArea.slideUp('slow');
   } else {
-    let msg = fn(...inputArray, resultArea);
-
-    resultArea.hide();
-    resultArea.text(msg);
-    resultArea.slideDown('slow');
-  }
-};
-
-$('#verify-number-input').on('change', event => {
-  handleInputChange(event.target, (number, resultArea) => {
     try {
+      let msg = fn(...inputArray, resultArea);
+
+      resultArea.hide();
+      resultArea.text(msg);
+      resultArea.slideDown('slow');
+    } catch (error) {
+      Message.display('error', error.message, resultArea);
+    }
+  }
+}
+
+const start = () => {
+  $('#verify-number-input').on('change', event => {
+    handleInputChange(event.target, number => {
       number = validateInput(number);
       let result = cachedPrimes(number).isPrime;
 
@@ -94,36 +109,28 @@ $('#verify-number-input').on('change', event => {
       msg += 'é um número primo';
 
       return msg;
-    } catch (error) {
-      Message.display('error', error.message, resultArea);
-    }
+    });
   });
-});
 
-$('#generate-list-p').on('change', event => {
-  handleInputChange(
-    ['#generate-list-from-input', '#generate-list-to-input'],
-    (from, to, resultArea) => {
-      try {
+  $('#generate-list-p').on('change', event => {
+    handleInputChange(
+      ['#generate-list-from-input', '#generate-list-to-input'],
+      (from, to) => {
         from = validateInput(from);
         to = validateInput(to);
 
         return primeNumbersListBetween(from, to).join(' ');
-      } catch (error) {
-        Message.display('error', error.message, resultArea);
       }
-    }
-  );
-});
+    );
+  });
 
-$('#generate-first-n-primes-p').on('change', event => {
-  handleInputChange(event.target, (number, resultArea) => {
-    try {
+  $('#generate-first-n-primes-p').on('change', event => {
+    handleInputChange(event.target, (number, resultArea) => {
       number = validateInput(number);
 
       return firstNPrimes(number).join(' ');
-    } catch (error) {
-      Message.display('error', error.message, resultArea);
-    }
+    });
   });
-});
+};
+
+start();
