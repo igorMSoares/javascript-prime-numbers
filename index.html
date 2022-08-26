@@ -14,72 +14,76 @@
   </head>
   <body>
     <main>
-      <p>
-        <label for="verify-number-input">
-          Verificar se
-          <input
-            id="verify-number-input"
-            name="verify-number"
-            type="text"
-            placeholder="número"
-          />
-          é primo.
-        </label>
-      </p>
-      <p
-        id="verify-number-result-p"
-        class="js-result"
-        style="display: none"
-      ></p>
-
-      <p id="generate-list-p">
-        <label for="generate-list-from-input">
-          Gerar uma lista de números primos entre
-          <input
-            id="generate-list-from-input"
-            class="generate-list-input"
-            type="text"
-            name="generate-list-from"
-            placeholder="início"
-          />
-        </label>
-        <label for="generate-list-to-input">
-          e
-          <input
-            id="generate-list-to-input"
-            class="generate-list-input"
-            type="text"
-            name="generate-list-to"
-            placeholder="fim"
-          />
-        </label>
-      </p>
-      <p
-        id="generate-list-result-p"
-        class="js-result listResult"
-        style="display: none"
-      ></p>
-
-      <p id="generate-first-n-primes-p">
-        <label for="generate-first-n-primes-input">
-          Listar os primeiros
-          <input
-            type="text"
-            class="generate-list-input"
-            name="generate-first-n-primes"
-            id="generate-first-n-primes-input"
-            placeholder="N"
-          />
-          números primos.
-        </label>
-      </p>
-      <div class="list-result-wrapper">
+      <section id="verify-number" class="wrapper">
+        <p>
+          <label for="verify-number-input">
+            Verificar se
+            <input
+              id="verify-number-input"
+              name="verify-number"
+              type="text"
+              placeholder="número"
+            />
+            é primo<span id="verify-number-punctuation">.</span>
+          </label>
+        </p>
+        <p
+          id="verify-number-result-p"
+          class="js-result"
+          style="display: none"
+        ></p>
+      </section>
+      <section class="wrapper">
+        <p id="generate-list-p">
+          <label for="generate-list-from-input">
+            Gerar uma lista de números primos entre
+            <input
+              id="generate-list-from-input"
+              class="generate-list-input"
+              type="text"
+              name="generate-list-from"
+              placeholder="início"
+            />
+          </label>
+          <label for="generate-list-to-input">
+            e
+            <input
+              id="generate-list-to-input"
+              class="generate-list-input"
+              type="text"
+              name="generate-list-to"
+              placeholder="fim"
+            />
+            <span id="generate-list-punctuation">.</span>
+          </label>
+        </p>
+        <p
+          id="generate-list-result-p"
+          class="js-result listResult"
+          style="display: none"
+        ></p>
+      </section>
+      <section class="wrapper">
+        <p id="generate-first-n-primes-p">
+          <label for="generate-first-n-primes-input">
+            Listar os primeiros
+            <input
+              type="text"
+              class="generate-list-input"
+              name="generate-first-n-primes"
+              id="generate-first-n-primes-input"
+              placeholder="N"
+            />
+            números primos
+            <span id="generate-first-n-primes-punctuation">.</span>
+          </label>
+        </p>
         <p
           id="generate-first-n-primes-result-p"
           class="js-result listResult"
           style="display: none"
         ></p>
-      </div>
+      </section>
     </main>
   </body>
 </html>
