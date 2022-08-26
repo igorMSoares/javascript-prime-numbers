@@ -11,14 +11,6 @@ const arrayToObject = array => {
 };
 
 function testPrimality(number, exportPrimesList = false, primesList = false) {
-  if (Number.isNaN(number)) {
-    if (typeof number === 'string') {
-      number = parseInt(number);
-    } else {
-      throw 'Invalid type error';
-    }
-  }
-
   if (number <= 1) {
     return false;
   }
@@ -58,6 +50,7 @@ const memoizePrimesList = () => {
   let primeNumbersCache = {};
 
   return number => {
+    isValidNumber(number);
     let result = { primesList: primeNumbersCache };
 
     if (primeNumbersCache[number]) {
@@ -117,6 +110,7 @@ function primeNumbersListBetween(from, to) {
 }
 
 function firstNPrimes(number) {
+  isValidNumber(number);
   if (number === 0) {
     return [];
   }
@@ -128,27 +122,44 @@ function firstNPrimes(number) {
   return listOfPrimes;
 }
 
-module.exports = {
-  testPrimality,
+class InvalidArgumentError extends Error {
+  constructor(message) {
+    super();
+    this.message = message;
+    this.name = 'InvalidArgumentError';
+  }
+}
+
+function isValidNumber(number) {
+  if (typeof number !== 'number') {
+    throw new TypeError(
+      `Argument should be a number. Current type: ${typeof number}`
+    );
+  } else if (!Number.isInteger(number) || number < 0) {
+    let message = `Only positive integers are allowed. Current value: ${number}`;
+    throw new InvalidArgumentError(message);
+  }
+  return true;
+}
+
+// module.exports = {
+//   InvalidArgumentException,
+//   isValidNumber,
+//   testPrimality,
+//   primeNumbersUpTo,
+//   cachedPrimes,
+//   primeNumbersListBetween,
+//   firstNPrimes,
+// };
+
+export {
   primeNumbersUpTo,
   cachedPrimes,
   primeNumbersListBetween,
   firstNPrimes,
+  InvalidArgumentError,
+  isValidNumber,
 };
-
-// export {
-//   firstNPrimes,
-//   primeNumbersListBetween,
-//   isPrimeNumber,
-//   isPrimeNumberV2,
-//   testPrimality as isPrimeNumberV3,
-//   cachedPrimes,
-//   arrayToMap,
-//   arrayToMapV2,
-//   arrayToObject as arrayToMapV3,
-//   primeNumbersUpTo,
-//   verifyPrimeNumber,
-// };
 
 function verifyPrimeNumber(number, upTo = null, outputType = 'string') {
   if (!['array', 'string'].includes(outputType)) {
@@ -275,9 +286,4 @@ function validate(num) {
       'Apenas números inteiros positivos serão computados.';
   }
   return response;
-}
-
-function InvalidArgumentException(message) {
-  this.message = message;
-  this.name = 'InvalidArgumentException';
 }

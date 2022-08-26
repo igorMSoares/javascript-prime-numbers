@@ -5,12 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Números Primos</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="./css/style.css" />
     <script
       src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"
       defer
     ></script>
-    <script src="./script.js" type="module" defer></script>
+    <script src="./js/script.js" type="module" defer></script>
   </head>
   <body>
     <main>
@@ -26,10 +26,14 @@
           é primo.
         </label>
       </p>
-      <p id="verify-number-result-p"></p>
+      <p
+        id="verify-number-result-p"
+        class="js-result"
+        style="display: none"
+      ></p>
 
       <p id="generate-list-p">
-        <label for="generate-list-between-input">
+        <label for="generate-list-from-input">
           Gerar uma lista de números primos entre
           <input
             id="generate-list-from-input"
@@ -50,7 +54,11 @@
           />
         </label>
       </p>
-      <p id="generate-list-result-p" class="result"></p>
+      <p
+        id="generate-list-result-p"
+        class="js-result listResult"
+        style="display: none"
+      ></p>
 
       <p id="generate-first-n-primes-p">
         <label for="generate-first-n-primes-input">
@@ -66,7 +74,11 @@
         </label>
       </p>
       <div class="list-result-wrapper">
-        <p id="generate-first-n-primes-result-p" class="result"></p>
+        <p
+          id="generate-first-n-primes-result-p"
+          class="js-result listResult"
+          style="display: none"
+        ></p>
       </div>
     </main>
   </body>

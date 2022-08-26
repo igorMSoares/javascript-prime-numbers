@@ -1,6 +1,8 @@
 const expect = require('chai').expect;
 const assert = require('assert');
 const {
+  isValidNumber,
+  InvalidArgumentException,
   testPrimality,
   cachedPrimes,
   primeNumbersUpTo,
@@ -115,6 +117,59 @@ describe('Prime number verifier and prime numbers list generator', () => {
       expect(firstNPrimes(10)).to.deep.equal([
         2, 3, 5, 7, 11, 13, 17, 19, 23, 29,
       ]);
+    });
+  });
+});
+
+describe('Function parameters validations and error handling', () => {
+  describe('validation function', () => {
+    it('throws an error if the argument is not a number type nor a integer >=0', () => {
+      expect(() => isValidNumber('string')).to.throw(InvalidArgumentException);
+      expect(() => isValidNumber([])).to.throw(InvalidArgumentException);
+      expect(() => isValidNumber({})).to.throw(InvalidArgumentException);
+      expect(() => isValidNumber(-1)).to.throw(InvalidArgumentException);
+
+      expect(() => isValidNumber('string')).to.throw('inteiros positivos');
+      expect(() => isValidNumber([])).to.throw('inteiros positivos');
+      expect(() => isValidNumber({})).to.throw('inteiros positivos');
+      expect(() => isValidNumber(-1)).to.throw('inteiros positivos');
+
+      expect(() => isValidNumber(0)).to.not.throw(InvalidArgumentException);
+      expect(() => isValidNumber(2)).to.not.throw(InvalidArgumentException);
+    });
+  });
+
+  describe('cachedPrimes() number validation', () => {
+    it('throws an error if the argument is not a number type nor a integer >=0', () => {
+      expect(() => cachedPrimes('2')).to.throw(InvalidArgumentException);
+      expect(() => cachedPrimes('2')).to.throw('inteiros positivos');
+      expect(() => cachedPrimes([])).to.throw(InvalidArgumentException);
+      expect(() => cachedPrimes([])).to.throw('inteiros positivos');
+      expect(() => cachedPrimes({})).to.throw(InvalidArgumentException);
+      expect(() => cachedPrimes({})).to.throw('inteiros positivos');
+      expect(() => cachedPrimes(-1)).to.throw(InvalidArgumentException);
+      expect(() => cachedPrimes(-1)).to.throw('inteiros positivos');
+
+      expect(() => cachedPrimes(2)).to.not.throw(InvalidArgumentException);
+      expect(() => cachedPrimes(3)).to.not.throw(InvalidArgumentException);
+      expect(() => cachedPrimes(4)).to.not.throw(InvalidArgumentException);
+    });
+  });
+
+  describe('firstNPrimes() number validation', () => {
+    it('throws an error if the argument is not a number type nor a integer >=0', () => {
+      expect(() => firstNPrimes('2')).to.throw(InvalidArgumentException);
+      expect(() => firstNPrimes('2')).to.throw('inteiros positivos');
+      expect(() => firstNPrimes([])).to.throw(InvalidArgumentException);
+      expect(() => firstNPrimes([])).to.throw('inteiros positivos');
+      expect(() => firstNPrimes({})).to.throw(InvalidArgumentException);
+      expect(() => firstNPrimes({})).to.throw('inteiros positivos');
+      expect(() => firstNPrimes(-1)).to.throw(InvalidArgumentException);
+      expect(() => firstNPrimes(-1)).to.throw('inteiros positivos');
+
+      expect(() => firstNPrimes(2)).to.not.throw(InvalidArgumentException);
+      expect(() => firstNPrimes(3)).to.not.throw(InvalidArgumentException);
+      expect(() => firstNPrimes(4)).to.not.throw(InvalidArgumentException);
     });
   });
 });
