@@ -49,7 +49,14 @@ function validateInput(value, message = 'Digite um número inteiro positivo.') {
   return parsedValue;
 }
 
-const getNumberInput = elementSelector => $(elementSelector).val();
+const getInputValue = elementSelector => $(elementSelector).val();
+
+const togglePeriod = (element, char) => {
+  let punctuationMark = element.text();
+  if (punctuationMark !== char) {
+    element.text(char);
+  }
+};
 
 /**
  * Encapsulates operations performed on input change
@@ -71,11 +78,17 @@ function handleInputChange(elementSelector, fn) {
 
   if (Array.isArray(elementSelector)) {
     for (let element of elementSelector) {
-      inputArray.push(getNumberInput(element));
+      inputArray.push(getInputValue(element));
     }
+
+    /** @type {string} - The name attribute of the input tag,
+     *    corresponding to the action being performed. In case there are more than
+     *    one input for the same action, each name attribute must have a '-something'
+     *    at the end to differentiate each input
+     */
     inputName = $(elementSelector[0]).attr('name').split(/-\w*$/)[0];
   } else {
-    inputArray.push(getNumberInput(elementSelector));
+    inputArray.push(getInputValue(elementSelector));
     inputName = $(elementSelector).attr('name');
   }
 
@@ -83,12 +96,14 @@ function handleInputChange(elementSelector, fn) {
 
   if (inputArray.some(value => value === '')) {
     resultArea.slideUp('slow');
+    togglePeriod($(`span[id*="${inputName}"]`), '.');
   } else {
     try {
       let msg = fn(...inputArray, resultArea);
 
       resultArea.hide();
       resultArea.text(msg);
+      togglePeriod($(`span[id*="${inputName}"]`), ':');
       resultArea.slideDown('slow');
     } catch (error) {
       Message.display('error', error.message, resultArea);
@@ -112,7 +127,7 @@ const start = () => {
     });
   });
 
-  $('#generate-list-p').on('change', event => {
+  $('#generate-list-p').on('change', () => {
     handleInputChange(
       ['#generate-list-from-input', '#generate-list-to-input'],
       (from, to) => {
@@ -125,7 +140,7 @@ const start = () => {
   });
 
   $('#generate-first-n-primes-p').on('change', event => {
-    handleInputChange(event.target, (number, resultArea) => {
+    handleInputChange(event.target, number => {
       number = validateInput(number);
 
       return firstNPrimes(number).join(' ');
