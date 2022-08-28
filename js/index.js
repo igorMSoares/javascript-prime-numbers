@@ -40,6 +40,10 @@ class Message {
 function validateInput(value, message = 'Digite um número inteiro positivo.') {
   let parsedValue = parseInt(value);
 
+  if (value.match(/\D+/)) {
+    throw new InvalidArgumentError(message);
+  }
+
   try {
     isValidNumber(parsedValue);
   } catch (error) {
@@ -111,7 +115,46 @@ function handleInputChange(elementSelector, fn) {
   }
 }
 
+const checkInputValidity = jQueryElement => {
+  let value = jQueryElement.val();
+  if (value !== '' && value.match(/\D+/) !== null) {
+    return false;
+  }
+  return true;
+};
+
+function handleInputInput(elementSelector) {
+  if (!checkInputValidity($(elementSelector))) {
+    $(elementSelector)
+      .get(0)
+      .setCustomValidity('Digite um número inteiro positvo.');
+    $(elementSelector).get(0).reportValidity();
+    $(elementSelector).attr(
+      'style',
+      'border-color: var(--invalid-input-border)'
+    );
+  } else {
+    $(elementSelector).get(0).setCustomValidity('');
+    $(elementSelector).attr('style', 'border-color: var(--input-border)');
+  }
+}
+
+const initInputHandlers = () => {
+  [
+    '#verify-number-input',
+    '#generate-list-from-input',
+    '#generate-list-to-input',
+    '#generate-first-n-primes-input',
+  ].forEach(elementSelector => {
+    $(elementSelector).on('input', event => {
+      handleInputInput(event.target);
+    });
+  });
+};
+
 const start = () => {
+  initInputHandlers();
+
   $('#verify-number-input').on('change', event => {
     handleInputChange(event.target, number => {
       number = validateInput(number);
