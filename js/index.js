@@ -47,6 +47,11 @@ function validateInput(value, message = 'Digite um número inteiro positivo.') {
   try {
     isValidNumber(parsedValue);
   } catch (error) {
+    if (/([Nn]umber).+(too).+(large)/.test(error.message)) {
+      const limit = +error.message.match(/\d+/);
+      message = `Número muito grande. 
+        Digite um número menor ou igual a ${limit.toLocaleString('pt-BR')}`;
+    }
     throw new InvalidArgumentError(message);
   }
 
