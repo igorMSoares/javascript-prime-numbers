@@ -12,6 +12,8 @@ const asyncTimeout = miliseconds => {
   });
 };
 
+const LIMIT = 1_000_000;
+
 class Message {
   static display(type, message, messageArea) {
     messageArea.text(`${message}`).hide();
@@ -67,6 +69,86 @@ const togglePeriod = (element, char) => {
   }
 };
 
+function renderConfirmationArea(params, fn) {
+  params.resultArea.text('').slideUp('slow');
+  let sectionID = params.inputName;
+  $(`#${sectionID} input`).prop('disabled', true);
+
+  let confirmBtn = $('<button>')
+    .attr({
+      id: `${sectionID}-confirm-btn`,
+      class: 'button',
+      type: 'confirm',
+      text: 'Confirmar',
+    })
+    .html('Confirmar')
+    .on('click', event => handleBtnClick(event, params, fn));
+
+  let cancelBtn = $('<button>')
+    .attr({
+      id: `${sectionID}-cancel-btn`,
+      class: 'button',
+      type: 'cancel',
+      text: 'Cancelar',
+    })
+    .html('Cancelar')
+    .on('click', event => handleBtnClick(event, params, fn));
+
+  let span = $('<span>').addClass('btn-wrapper');
+  span.append(confirmBtn).append(cancelBtn);
+
+  let div = $('<div>')
+    .attr({
+      class: 'largeNumbersMsg msg error',
+    })
+    .html(
+      `
+      ATENÇÃO: número muito grande.<br />
+      Esta operação poderá demorar alguns minutos.<br /><br />
+      Tem certeza que deseja continuar?<br />
+    `
+    )
+    .append(span);
+
+  $(`#${sectionID}`).append(div);
+}
+
+function handleBtnClick(event, params, fn) {
+  let action = $(event.target).attr('type');
+  $(`#${params.inputName} input`).prop('disabled', false);
+  $('div.largeNumbersMsg').remove();
+
+  if (action === 'confirm') {
+    params.resultArea.text('Calculando...').slideDown('slow');
+    window.setTimeout(() => {
+      calculateAndDisplay(params, fn);
+    }, 500);
+  } else if (action === 'cancel') {
+    cleanInput(params.inputName);
+  }
+}
+
+function cleanInput(sectionName) {
+  $(`#${sectionName} input`).val('');
+}
+
+function calculateAndDisplay(params, fn) {
+  let inputArray = params.inputArray;
+  let resultArea = params.resultArea;
+  let inputName = params.inputName;
+
+  try {
+    let msg = fn(...inputArray, resultArea);
+
+    resultArea.hide();
+    resultArea.text(msg);
+    togglePeriod($(`span[id*="${inputName}"]`), ':');
+    resultArea.slideDown('slow');
+  } catch (error) {
+    Message.display('error', error.message, resultArea);
+  }
+}
+
 /**
  * Encapsulates operations performed on input change
  *
@@ -86,9 +168,9 @@ function handleInputChange(elementSelector, fn) {
   let inputName = undefined;
 
   if (Array.isArray(elementSelector)) {
-    for (let element of elementSelector) {
+    elementSelector.forEach(element => {
       inputArray.push(getInputValue(element));
-    }
+    });
 
     /** @type {string} - The name attribute of the input tag,
      *    corresponding to the action being performed. In case there are more than
@@ -107,15 +189,35 @@ function handleInputChange(elementSelector, fn) {
     resultArea.slideUp('slow');
     togglePeriod($(`span[id*="${inputName}"]`), '.');
   } else {
-    try {
-      let msg = fn(...inputArray, resultArea);
+    let largeNumbers = inputArray.filter(value => value >= LIMIT);
 
-      resultArea.hide();
-      resultArea.text(msg);
-      togglePeriod($(`span[id*="${inputName}"]`), ':');
-      resultArea.slideDown('slow');
-    } catch (error) {
-      Message.display('error', error.message, resultArea);
+    if (inputName === 'generate-first-n-primes') {
+      let digits = (inputArray[0] + '').length;
+      let factor = 3 * 2 ** (digits - 1);
+      let numberToCalculate = inputArray[0] * factor;
+      if (numberToCalculate >= LIMIT) {
+        largeNumbers.push(inputArray[0]);
+      }
+    }
+
+    if (largeNumbers.length > 0) {
+      renderConfirmationArea(
+        {
+          inputName,
+          inputArray,
+          resultArea,
+        },
+        fn
+      );
+    } else {
+      calculateAndDisplay(
+        {
+          inputName,
+          inputArray,
+          resultArea,
+        },
+        fn
+      );
     }
   }
 }
@@ -144,7 +246,7 @@ function handleInputInput(elementSelector) {
   }
 }
 
-const initInputHandlers = () => {
+function initInputHandlers() {
   [
     '#verify-number-input',
     '#generate-list-from-input',
@@ -155,9 +257,9 @@ const initInputHandlers = () => {
       handleInputInput(event.target);
     });
   });
-};
+}
 
-const start = () => {
+function start() {
   initInputHandlers();
 
   $('#verify-number-input').on('change', event => {
@@ -197,6 +299,6 @@ const start = () => {
       return firstNPrimes(number).join(' ');
     });
   });
-};
+}
 
 start();
