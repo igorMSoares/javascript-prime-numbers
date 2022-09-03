@@ -259,46 +259,68 @@ function initInputHandlers() {
   });
 }
 
+function primalityCheck(event) {
+  handleInputChange(event.target, (number, resultArea) => {
+    number = validateInput(number);
+    let result = cachedPrimes(number).isPrime;
+
+    let msg = `${number} `;
+    if (result === false) {
+      msg += 'não ';
+      resultArea.removeClass('success');
+    } else {
+      resultArea.addClass('success');
+    }
+    msg += 'é um número primo';
+
+    return msg;
+  });
+}
+
+function generateListOfPrimes() {
+  handleInputChange(
+    ['#generate-list-from-input', '#generate-list-to-input'],
+    (from, to) => {
+      from = validateInput(from);
+      to = validateInput(to);
+
+      return primeNumbersListBetween(from, to).join(' ');
+    }
+  );
+}
+
+function listFirstNPrimes(event) {
+  handleInputChange(event.target, number => {
+    number = validateInput(number);
+
+    return firstNPrimes(number).join(' ');
+  });
+}
+
+function initInputKeydownHandler() {
+  $('#verify-number-input').keydown(event => {
+    if (event.key === 'Enter' || event.key === 'Tab') {
+      primalityCheck(event);
+    }
+  });
+
+  $('#generate-list-p').keydown(event => {
+    if (event.key === 'Enter' || event.key === 'Tab') {
+      generateListOfPrimes();
+    }
+  });
+
+  $('#generate-first-n-primes-p').keydown(event => {
+    if (event.key === 'Enter' || event.key === 'Tab') {
+      listFirstNPrimes(event);
+    }
+  });
+}
+
 function start() {
   initInputHandlers();
 
-  $('#verify-number-input').on('change', event => {
-    handleInputChange(event.target, (number, resultArea) => {
-      number = validateInput(number);
-      let result = cachedPrimes(number).isPrime;
-
-      let msg = `${number} `;
-      if (result === false) {
-        msg += 'não ';
-        resultArea.removeClass('success');
-      } else {
-        resultArea.addClass('success');
-      }
-      msg += 'é um número primo';
-
-      return msg;
-    });
-  });
-
-  $('#generate-list-p').on('change', () => {
-    handleInputChange(
-      ['#generate-list-from-input', '#generate-list-to-input'],
-      (from, to) => {
-        from = validateInput(from);
-        to = validateInput(to);
-
-        return primeNumbersListBetween(from, to).join(' ');
-      }
-    );
-  });
-
-  $('#generate-first-n-primes-p').on('change', event => {
-    handleInputChange(event.target, number => {
-      number = validateInput(number);
-
-      return firstNPrimes(number).join(' ');
-    });
-  });
+  initInputKeydownHandler();
 }
 
 start();
