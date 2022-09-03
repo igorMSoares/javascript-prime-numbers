@@ -136,7 +136,6 @@ function calculateAndDisplay(params, fn) {
   let inputArray = params.inputArray;
   let resultArea = params.resultArea;
   let inputName = params.inputName;
-
   try {
     let msg = fn(...inputArray, resultArea);
 
@@ -246,7 +245,51 @@ function handleInputInput(elementSelector) {
   }
 }
 
-function initInputHandlers() {
+const primalityCheck = (number, resultArea) => {
+  number = validateInput(number);
+  let result = cachedPrimes(number).isPrime;
+
+  let msg = `${number} `;
+  if (result === false) {
+    msg += 'não ';
+    resultArea.removeClass('success');
+  } else {
+    resultArea.addClass('success');
+  }
+  msg += 'é um número primo';
+
+  return msg;
+};
+
+const generateListOfPrimes = (from, to) => {
+  from = validateInput(from);
+  to = validateInput(to);
+
+  return primeNumbersListBetween(from, to).join(' ');
+};
+
+const listFirstNPrimes = number => {
+  number = validateInput(number);
+
+  return firstNPrimes(number).join(' ');
+};
+
+function initKeyDownEvent(inputs) {
+  inputs.forEach((handler, inputID) => {
+    $(inputID).keydown(event => {
+      // const isEnterOrTabKey = event.key === 'Enter' || event.key === 'Tab';
+      const [callback, target] = Array.isArray(handler)
+        ? handler
+        : [handler, event.target];
+
+      if (['Enter', 'Tab'].includes(event.key)) {
+        handleInputChange(target, callback);
+      }
+    });
+  });
+}
+
+function initInputEvent() {
   [
     '#verify-number-input',
     '#generate-list-from-input',
@@ -259,68 +302,30 @@ function initInputHandlers() {
   });
 }
 
-function primalityCheck(event) {
-  handleInputChange(event.target, (number, resultArea) => {
-    number = validateInput(number);
-    let result = cachedPrimes(number).isPrime;
+const initInputs = inputs => {
+  initKeyDownEvent(inputs);
+  initInputEvent();
+};
 
-    let msg = `${number} `;
-    if (result === false) {
-      msg += 'não ';
-      resultArea.removeClass('success');
-    } else {
-      resultArea.addClass('success');
-    }
-    msg += 'é um número primo';
+const start = () => {
+  /**
+   * @type {Map.<string, Function|Array[Function, Array[string]]}
+   * keys -> ID of the element to attach the eventListener
+   * values -> A callback or an Array: [callback, inputIDs[]]
+   */
+  const inputs = new Map([
+    ['#verify-number', primalityCheck],
+    [
+      '#generate-list',
+      [
+        generateListOfPrimes,
+        ['#generate-list-from-input', '#generate-list-to-input'],
+      ],
+    ],
+    ['#generate-first-n-primes', listFirstNPrimes],
+  ]);
 
-    return msg;
-  });
-}
-
-function generateListOfPrimes() {
-  handleInputChange(
-    ['#generate-list-from-input', '#generate-list-to-input'],
-    (from, to) => {
-      from = validateInput(from);
-      to = validateInput(to);
-
-      return primeNumbersListBetween(from, to).join(' ');
-    }
-  );
-}
-
-function listFirstNPrimes(event) {
-  handleInputChange(event.target, number => {
-    number = validateInput(number);
-
-    return firstNPrimes(number).join(' ');
-  });
-}
-
-function initInputKeydownHandler() {
-  $('#verify-number-input').keydown(event => {
-    if (event.key === 'Enter' || event.key === 'Tab') {
-      primalityCheck(event);
-    }
-  });
-
-  $('#generate-list-p').keydown(event => {
-    if (event.key === 'Enter' || event.key === 'Tab') {
-      generateListOfPrimes();
-    }
-  });
-
-  $('#generate-first-n-primes-p').keydown(event => {
-    if (event.key === 'Enter' || event.key === 'Tab') {
-      listFirstNPrimes(event);
-    }
-  });
-}
-
-function start() {
-  initInputHandlers();
-
-  initInputKeydownHandler();
-}
+  initInputs(inputs);
+};
 
 start();
