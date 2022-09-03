@@ -221,6 +221,67 @@ function handleInputChange(elementSelector, fn) {
   }
 }
 
+const handleInputChangeV2 = (elementSelector, fn) => {
+  let inputArray = [];
+  let inputName = undefined;
+
+  // if (Array.isArray(elementSelector)) {
+  //   elementSelector.forEach(element => {
+  //     inputArray.push(getInputValue(element));
+  //   });
+
+  //   /** @type {string} - The name attribute of the input tag,
+  //    *    corresponding to the action being performed. In case there are more than
+  //    *    one input for the same action, each name attribute must have a '-something'
+  //    *    at the end to differentiate each input
+  //    */
+  //   inputName = $(elementSelector[0]).attr('name').split(/-\w*$/)[0];
+  // } else {
+  //   inputArray.push(getInputValue(elementSelector));
+  //   inputName = $(elementSelector).attr('name');
+  // }
+
+  inputIterator = $(`${elementSelector} input`);
+
+  let resultArea = $(`p[id*="${inputName}"].js-result`);
+
+  if (inputArray.some(value => value === '')) {
+    resultArea.slideUp('slow');
+    togglePeriod($(`span[id*="${inputName}"]`), '.');
+  } else {
+    let largeNumbers = inputArray.filter(value => value >= LIMIT);
+
+    if (inputName === 'generate-first-n-primes') {
+      let digits = (inputArray[0] + '').length;
+      let factor = 3 * 2 ** (digits - 1);
+      let numberToCalculate = inputArray[0] * factor;
+      if (numberToCalculate >= LIMIT) {
+        largeNumbers.push(inputArray[0]);
+      }
+    }
+
+    if (largeNumbers.length > 0) {
+      renderConfirmationArea(
+        {
+          inputName,
+          inputArray,
+          resultArea,
+        },
+        fn
+      );
+    } else {
+      calculateAndDisplay(
+        {
+          inputName,
+          inputArray,
+          resultArea,
+        },
+        fn
+      );
+    }
+  }
+};
+
 const checkInputValidity = jQueryElement => {
   let value = jQueryElement.val();
   if (value !== '' && value.match(/\D+/) !== null) {
