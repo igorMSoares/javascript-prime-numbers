@@ -229,11 +229,12 @@ const checkInputValidity = jQueryElement => {
   return true;
 };
 
-function handleInputInput(elementSelector) {
+function handleInputInput(
+  elementSelector,
+  msg = 'Digite um número inteiro positvo.'
+) {
   if (!checkInputValidity($(elementSelector))) {
-    $(elementSelector)
-      .get(0)
-      .setCustomValidity('Digite um número inteiro positvo.');
+    $(elementSelector).get(0).setCustomValidity(msg);
     $(elementSelector).get(0).reportValidity();
     $(elementSelector).attr(
       'style',
@@ -274,10 +275,9 @@ const listFirstNPrimes = number => {
   return firstNPrimes(number).join(' ');
 };
 
-function initKeyDownEvent(inputs) {
-  inputs.forEach((handler, inputID) => {
-    $(inputID).keydown(event => {
-      // const isEnterOrTabKey = event.key === 'Enter' || event.key === 'Tab';
+function initKeydownEvent(inputs) {
+  inputs.forEach((handler, elementID) => {
+    $(elementID).keydown(event => {
       const [callback, target] = Array.isArray(handler)
         ? handler
         : [handler, event.target];
@@ -289,22 +289,17 @@ function initKeyDownEvent(inputs) {
   });
 }
 
-function initInputEvent() {
-  [
-    '#verify-number-input',
-    '#generate-list-from-input',
-    '#generate-list-to-input',
-    '#generate-first-n-primes-input',
-  ].forEach(elementSelector => {
-    $(elementSelector).on('input', event => {
+function initInputEvent(inputs) {
+  for (const elementID of inputs.keys()) {
+    $(`${elementID} input`).on('input', event => {
       handleInputInput(event.target);
     });
-  });
+  }
 }
 
 const initInputs = inputs => {
-  initKeyDownEvent(inputs);
-  initInputEvent();
+  initKeydownEvent(inputs);
+  initInputEvent(inputs);
 };
 
 const start = () => {
