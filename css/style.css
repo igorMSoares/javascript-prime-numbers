@@ -15,7 +15,7 @@
   --input-focus-l: 20%;
   --invalid-input-border: rgb(161, 5, 5);
   --scrollbar-color: rgb(169, 169, 169);
-  --icon-color: #8674c2;
+  --icon-color: rgba(172, 189, 189, 1);
 }
 
 html {
@@ -190,6 +190,7 @@ input:focus {
   color: var(--icon-color);
   transition: width 250ms;
   transition: height 250ms;
+  transition: transform 500ms ease-in-out;
 }
 
 .icon-spacer {
@@ -205,4 +206,14 @@ input:focus {
   cursor: pointer;
   width: 1.2em;
   height: 1.2em;
+}
+
+.collapse {
+  transform: rotate(-0deg);
+  /* transition: transform 500ms ease-in-out; */
+}
+
+.expand {
+  transform: rotate(180deg);
+  /* transition: transform 500ms ease-in-out; */
 }

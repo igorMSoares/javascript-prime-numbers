@@ -149,6 +149,8 @@ const toggleIcons = (sectionID, action) => {
   } else if (action === 'hide' && isVisible) {
     icons.fadeOut();
   }
+
+  $(`#${sectionID} .icon[type="toggle"]`).removeClass('expand collapse');
 };
 
 function calculateAndDisplay(params, fn) {
@@ -290,6 +292,42 @@ const initInputs = inputs => {
   initInputEvent(inputs);
 };
 
+const closeResult = sectionID => {
+  const resultArea = $(`#${sectionID} .js-result`);
+  cleanInput(sectionID);
+  toggleIcons(sectionID, 'hide');
+  resultArea.slideUp('slow', () => resultArea.html(''));
+};
+
+const toggleResult = sectionID => {
+  const resultArea = $(`#${sectionID} .js-result`);
+  if (resultArea.is(':visible')) {
+    resultArea.slideUp('slow');
+    $(`#${sectionID} .icon[type="toggle"]`)
+      .removeClass('collapse')
+      .addClass('expand');
+  } else {
+    resultArea.slideDown('slow');
+    $(`#${sectionID} .icon[type="toggle"]`)
+      .removeClass('expand')
+      .addClass('collapse');
+  }
+};
+
+const initIcons = () => {
+  $('.icon').on('click', event => {
+    const icon = $(event.target).is('use')
+      ? $(event.target).parent()
+      : $(event.target);
+    const sectionID = icon.parents('section').attr('id');
+    const action = icon.attr('type');
+    if (action === 'toggle') {
+      toggleResult(sectionID);
+    } else if (action === 'close') {
+      closeResult(sectionID);
+    }
+  });
+};
 const start = () => {
   /**
    * @type {Map.<string, Function>}
@@ -303,6 +341,7 @@ const start = () => {
   ]);
 
   initInputs(inputs);
+  initIcons();
 };
 
 start();
