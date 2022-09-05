@@ -28,12 +28,13 @@ class Message {
     messageArea.addClass(type);
 
     const sectionID = messageArea.parent().attr('id');
-    togglePeriod($(`span[id*="${sectionID}"]`), ':');
+    togglePeriod(sectionID, ':');
     toggleIcons(sectionID, 'hide');
+
     messageArea.slideDown('slow', async () => {
       await asyncTimeout(2000);
       messageArea.slideUp('slow', () => {
-        togglePeriod($(`span[id*="${sectionID}"]`), '.');
+        togglePeriod(sectionID, '.');
         messageArea.empty();
       });
       await asyncTimeout(2000);
@@ -66,11 +67,25 @@ function validateInput(value, message = 'Digite um número inteiro positivo.') {
   return parsedValue;
 }
 
-const togglePeriod = (element, char) => {
-  let punctuationMark = element.text();
+const togglePeriod = (sectionID, char) => {
+  const element = $(`span[id*="${sectionID}"]`);
+  const punctuationMark = element.text();
   if (punctuationMark !== char) {
     element.text(char);
   }
+};
+
+const toggleIcons = (sectionID, action) => {
+  const icons = $(`#${sectionID} .icons-wrapper`);
+  const isVisible = icons.is(':visible');
+
+  if (action === 'show' && !isVisible) {
+    icons.fadeIn();
+  } else if (action === 'hide' && isVisible) {
+    icons.fadeOut();
+  }
+
+  $(`#${sectionID} .icon[type="toggle"]`).removeClass('expand collapse');
 };
 
 function renderConfirmationArea(params, fn) {
@@ -78,6 +93,7 @@ function renderConfirmationArea(params, fn) {
 
   $(`#${sectionID} .js-result`).text('').slideUp('slow');
   $(`#${sectionID} input`).prop('disabled', true);
+  toggleIcons(sectionID, 'hide');
 
   let confirmBtn = $('<button>')
     .attr({
@@ -126,7 +142,10 @@ function handleBtnClick(event, params, fn) {
   $('div.largeNumbersMsg').remove();
 
   if (action === 'confirm') {
-    $(`#${sectionID} .js-result`).text('Calculando...').slideDown('slow');
+    $(`#${sectionID} .js-result`)
+      .removeClass('success error')
+      .text('Calculando...')
+      .slideDown('slow');
     window.setTimeout(() => {
       calculateAndDisplay(params, fn);
     }, 500);
@@ -139,19 +158,6 @@ function cleanInput(sectionID) {
   $(`#${sectionID} input`).val('');
 }
 
-const toggleIcons = (sectionID, action) => {
-  const icons = $(`#${sectionID} .icons-wrapper`);
-  const isVisible = icons.is(':visible');
-
-  if (action === 'show' && !isVisible) {
-    icons.fadeIn();
-  } else if (action === 'hide' && isVisible) {
-    icons.fadeOut();
-  }
-
-  $(`#${sectionID} .icon[type="toggle"]`).removeClass('expand collapse');
-};
-
 function calculateAndDisplay(params, fn) {
   const sectionID = params.sectionID;
   const resultArea = $(`#${sectionID} .js-result`);
@@ -160,8 +166,10 @@ function calculateAndDisplay(params, fn) {
 
     resultArea.hide();
     resultArea.text(msg);
-    togglePeriod($(`span[id*="${sectionID}"]`), ':');
+
+    togglePeriod(sectionID, ':');
     toggleIcons(sectionID, 'show');
+
     resultArea.slideDown('slow');
   } catch (error) {
     Message.display('error', error.message, resultArea);
@@ -189,9 +197,7 @@ const handleInputChange = (sectionID, fn) => {
   const resultArea = $(`#${sectionID} .js-result`);
 
   if (inputValuesArray.some(value => value === '')) {
-    resultArea.slideUp('slow');
-    togglePeriod($(`span[id*="${sectionID}"]`), '.');
-    toggleIcons(sectionID, 'hide');
+    cleanResultArea(sectionID);
   } else {
     try {
       const tmp = [];
@@ -223,28 +229,22 @@ const handleInputChange = (sectionID, fn) => {
   }
 };
 
-const checkInputValidity = jQueryElement => {
-  let value = jQueryElement.val();
+const checkInputValidity = input => {
+  let value = input.val();
   if (value !== '' && value.match(/\D+/) !== null) {
     return false;
   }
   return true;
 };
 
-function handleInputInput(
-  elementSelector,
-  msg = 'Digite um número inteiro positvo.'
-) {
-  if (!checkInputValidity($(elementSelector))) {
-    $(elementSelector).get(0).setCustomValidity(msg);
-    $(elementSelector).get(0).reportValidity();
-    $(elementSelector).attr(
-      'style',
-      'border-color: var(--invalid-input-border)'
-    );
+function handleInputInput(input, msg = 'Digite um número inteiro positvo.') {
+  if (!checkInputValidity(input)) {
+    input.get(0).setCustomValidity(msg);
+    input.get(0).reportValidity();
+    input.attr('style', 'border-color: var(--invalid-input-border)');
   } else {
-    $(elementSelector).get(0).setCustomValidity('');
-    $(elementSelector).attr('style', 'border-color: var(--input-border)');
+    input.get(0).setCustomValidity('');
+    input.attr('style', 'border-color: var(--input-border)');
   }
 }
 
@@ -279,16 +279,21 @@ const initInputs = inputs => {
     });
 
     element.on('input', event => {
-      handleInputInput(event.target);
+      handleInputInput($(event.target));
     });
   });
 };
 
-const closeResult = sectionID => {
+const cleanResultArea = sectionID => {
   const resultArea = $(`#${sectionID} .js-result`);
-  cleanInput(sectionID);
+  togglePeriod(sectionID, '.');
   toggleIcons(sectionID, 'hide');
   resultArea.slideUp('slow', () => resultArea.html(''));
+};
+
+const closeResult = sectionID => {
+  cleanInput(sectionID);
+  cleanResultArea(sectionID);
 };
 
 const toggleResult = sectionID => {
@@ -313,6 +318,7 @@ const initIcons = () => {
       : $(event.target);
     const sectionID = icon.parents('section').attr('id');
     const action = icon.attr('type');
+
     if (action === 'toggle') {
       toggleResult(sectionID);
     } else if (action === 'close') {
@@ -320,6 +326,7 @@ const initIcons = () => {
     }
   });
 };
+
 const start = () => {
   /**
    * @type {Map.<string, Function>}
