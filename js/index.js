@@ -27,9 +27,16 @@ class Message {
     messageArea.addClass('msg');
     messageArea.addClass(type);
 
+    const sectionID = messageArea.parent().attr('id');
+    togglePeriod($(`span[id*="${sectionID}"]`), ':');
+    toggleIcons(sectionID, 'show');
     messageArea.slideDown('slow', async () => {
       await asyncTimeout(2000);
-      messageArea.slideUp('slow', () => messageArea.empty());
+      messageArea.slideUp('slow', () => {
+        togglePeriod($(`span[id*="${sectionID}"]`), '.');
+        toggleIcons(sectionID, 'hide');
+        messageArea.empty();
+      });
       await asyncTimeout(2000);
 
       messageArea.removeClass(type);
@@ -133,6 +140,17 @@ function cleanInput(sectionID) {
   $(`#${sectionID} input`).val('');
 }
 
+const toggleIcons = (sectionID, action) => {
+  const icons = $(`#${sectionID} .icons-wrapper`);
+  const isVisible = icons.is(':visible');
+
+  if (action === 'show' && !isVisible) {
+    icons.fadeIn();
+  } else if (action === 'hide' && isVisible) {
+    icons.fadeOut();
+  }
+};
+
 function calculateAndDisplay(params, fn) {
   const sectionID = params.sectionID;
   const resultArea = $(`#${sectionID} .js-result`);
@@ -142,6 +160,7 @@ function calculateAndDisplay(params, fn) {
     resultArea.hide();
     resultArea.text(msg);
     togglePeriod($(`span[id*="${sectionID}"]`), ':');
+    toggleIcons(sectionID, 'show');
     resultArea.slideDown('slow');
   } catch (error) {
     Message.display('error', error.message, resultArea);
@@ -171,6 +190,7 @@ const handleInputChange = (sectionID, fn) => {
   if (inputValuesArray.some(value => value === '')) {
     resultArea.slideUp('slow');
     togglePeriod($(`span[id*="${sectionID}"]`), '.');
+    toggleIcons(sectionID, 'hide');
   } else {
     try {
       const tmp = [];

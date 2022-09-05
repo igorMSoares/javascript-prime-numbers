@@ -15,8 +15,16 @@
     <script src="./js/index.js" type="module" defer></script>
   </head>
   <body>
-    <i data-fa-symbol="collapse" class="fa-solid fa-angles-up fa-fw"></i>
-    <i data-fa-symbol="close" class="fa-solid fa-xmark"></i>
+    <i
+      title="Minimizar Resultado"
+      data-fa-symbol="collapse"
+      class="fa-solid fa-angles-up fa-fw"
+    ></i>
+    <i
+      title="Limpar Resultado"
+      data-fa-symbol="close"
+      class="fa-solid fa-xmark"
+    ></i>
 
     <main>
       <section id="verify-number" class="wrapper">
@@ -32,8 +40,11 @@
             é primo<span id="verify-number-punctuation">.</span>
           </label>
         </p>
-        <div class="result-wrapper">
-          <svg class="icon"><use xlink:href="#collapse"></use></svg>
+        <div class="icons-wrapper" style="display: none">
+          <svg class="icon">
+            <use xlink:href="#collapse"></use>
+          </svg>
+          <svg class="icon"><use xlink:href="#close"></use></svg>
         </div>
         <p
           id="verify-number-result-p"
@@ -65,6 +76,12 @@
             <span id="generate-list-punctuation">.</span>
           </label>
         </p>
+        <div class="icons-wrapper" style="display: none">
+          <svg class="icon">
+            <use xlink:href="#collapse"></use>
+          </svg>
+          <svg class="icon"><use xlink:href="#close"></use></svg>
+        </div>
         <p
           id="generate-list-result-p"
           class="js-result listResult"
@@ -86,6 +103,12 @@
             <span id="generate-first-n-primes-punctuation">.</span>
           </label>
         </p>
+        <div class="icons-wrapper" style="display: none">
+          <svg class="icon">
+            <use xlink:href="#collapse"></use>
+          </svg>
+          <svg class="icon"><use xlink:href="#close"></use></svg>
+        </div>
         <p
           id="generate-first-n-primes-result-p"
           class="js-result listResult"
