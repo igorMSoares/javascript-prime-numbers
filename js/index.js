@@ -29,12 +29,11 @@ class Message {
 
     const sectionID = messageArea.parent().attr('id');
     togglePeriod($(`span[id*="${sectionID}"]`), ':');
-    toggleIcons(sectionID, 'show');
+    toggleIcons(sectionID, 'hide');
     messageArea.slideDown('slow', async () => {
       await asyncTimeout(2000);
       messageArea.slideUp('slow', () => {
         togglePeriod($(`span[id*="${sectionID}"]`), '.');
-        toggleIcons(sectionID, 'hide');
         messageArea.empty();
       });
       await asyncTimeout(2000);
