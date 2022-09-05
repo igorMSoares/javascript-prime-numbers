@@ -5,11 +5,19 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Números Primos</title>
+    <link href="./assets/fontawesome/css/fontawesome.css" rel="stylesheet" />
+    <link href="./assets/fontawesome/css/solid.css" rel="stylesheet" />
+    <link href="./assets/fontawesome/css/svg-with-js.css" rel="stylesheet" />
     <link rel="stylesheet" href="./css/style.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="./assets/fontawesome/js/fontawesome.js"></script>
+    <script src="./assets/fontawesome/js/solid.js"></script>
     <script src="./js/index.js" type="module" defer></script>
   </head>
   <body>
+    <i data-fa-symbol="collapse" class="fa-solid fa-angles-up fa-fw"></i>
+    <i data-fa-symbol="close" class="fa-solid fa-xmark"></i>
+
     <main>
       <section id="verify-number" class="wrapper">
         <p>
@@ -24,6 +32,9 @@
             é primo<span id="verify-number-punctuation">.</span>
           </label>
         </p>
+        <div class="result-wrapper">
+          <svg class="icon"><use xlink:href="#collapse"></use></svg>
+        </div>
         <p
           id="verify-number-result-p"
           class="js-result"
