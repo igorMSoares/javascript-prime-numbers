@@ -60,8 +60,6 @@ function validateInput(value, message = 'Digite um número inteiro positivo.') {
   return parsedValue;
 }
 
-const getInputValue = elementSelector => $(elementSelector).val();
-
 const togglePeriod = (element, char) => {
   let punctuationMark = element.text();
   if (punctuationMark !== char) {
@@ -70,8 +68,9 @@ const togglePeriod = (element, char) => {
 };
 
 function renderConfirmationArea(params, fn) {
-  params.resultArea.text('').slideUp('slow');
-  let sectionID = params.inputName;
+  const sectionID = params.sectionID;
+
+  $(`#${sectionID} .js-result`).text('').slideUp('slow');
   $(`#${sectionID} input`).prop('disabled', true);
 
   let confirmBtn = $('<button>')
@@ -114,171 +113,92 @@ function renderConfirmationArea(params, fn) {
 }
 
 function handleBtnClick(event, params, fn) {
-  let action = $(event.target).attr('type');
-  $(`#${params.inputName} input`).prop('disabled', false);
+  const action = $(event.target).attr('type');
+  const sectionID = params.sectionID;
+
+  $(`#${sectionID} input`).prop('disabled', false);
   $('div.largeNumbersMsg').remove();
 
   if (action === 'confirm') {
-    params.resultArea.text('Calculando...').slideDown('slow');
+    $(`#${sectionID} .js-result`).text('Calculando...').slideDown('slow');
     window.setTimeout(() => {
       calculateAndDisplay(params, fn);
     }, 500);
   } else if (action === 'cancel') {
-    cleanInput(params.inputName);
+    cleanInput(sectionID);
   }
 }
 
-function cleanInput(sectionName) {
-  $(`#${sectionName} input`).val('');
+function cleanInput(sectionID) {
+  $(`#${sectionID} input`).val('');
 }
 
 function calculateAndDisplay(params, fn) {
-  let inputArray = params.inputArray;
-  let resultArea = params.resultArea;
-  let inputName = params.inputName;
+  const sectionID = params.sectionID;
+  const resultArea = $(`#${sectionID} .js-result`);
   try {
-    let msg = fn(...inputArray, resultArea);
+    const msg = fn(...params.inputValuesArray, resultArea);
 
     resultArea.hide();
     resultArea.text(msg);
-    togglePeriod($(`span[id*="${inputName}"]`), ':');
+    togglePeriod($(`span[id*="${sectionID}"]`), ':');
     resultArea.slideDown('slow');
   } catch (error) {
     Message.display('error', error.message, resultArea);
   }
 }
 
-/**
- * Encapsulates operations performed on input change
- *
- * @function handleInputChange
- * @typedef {Object} jQuerySelector -
- *  Any valid Selector, as a string or a DOM Element
- * @typedef {Object} jQuery -
- *  Objets created using jQuery() or $()
- * @params {jQuerySelector|jQuerySelector[]} elementSelector -
- *  If there's more than one input to handle,
- *  they're passed as an array of Selectors
- * @params {function (number,[number],jQuery):string} fn -
- *  Callback function wich performs actual operations with the input value
- */
-function handleInputChange(elementSelector, fn) {
-  let inputArray = [];
-  let inputName = undefined;
+const hasLargeNumber = inputValues => {
+  return inputValues.some(number => number >= LIMIT) ? true : false;
+};
 
-  if (Array.isArray(elementSelector)) {
-    elementSelector.forEach(element => {
-      inputArray.push(getInputValue(element));
-    });
+const getNumberToCalculate = number => {
+  const digits = (number + '').length;
+  const factor = 3 * 2 ** (digits - 1);
 
-    /** @type {string} - The name attribute of the input tag,
-     *    corresponding to the action being performed. In case there are more than
-     *    one input for the same action, each name attribute must have a '-something'
-     *    at the end to differentiate each input
-     */
-    inputName = $(elementSelector[0]).attr('name').split(/-\w*$/)[0];
-  } else {
-    inputArray.push(getInputValue(elementSelector));
-    inputName = $(elementSelector).attr('name');
+  return number * factor;
+};
+
+const handleInputChange = (sectionID, fn) => {
+  let inputValuesArray = [];
+
+  for (const input of $(`#${sectionID} input`)) {
+    inputValuesArray.push($(input).val());
   }
 
-  let resultArea = $(`p[id*="${inputName}"].js-result`);
+  const resultArea = $(`#${sectionID} .js-result`);
 
-  if (inputArray.some(value => value === '')) {
+  if (inputValuesArray.some(value => value === '')) {
     resultArea.slideUp('slow');
-    togglePeriod($(`span[id*="${inputName}"]`), '.');
+    togglePeriod($(`span[id*="${sectionID}"]`), '.');
   } else {
-    let largeNumbers = inputArray.filter(value => value >= LIMIT);
-
-    if (inputName === 'generate-first-n-primes') {
-      let digits = (inputArray[0] + '').length;
-      let factor = 3 * 2 ** (digits - 1);
-      let numberToCalculate = inputArray[0] * factor;
-      if (numberToCalculate >= LIMIT) {
-        largeNumbers.push(inputArray[0]);
-      }
+    try {
+      const tmp = [];
+      inputValuesArray.forEach(number => {
+        tmp.push(validateInput(number));
+      });
+      inputValuesArray = tmp;
+    } catch (error) {
+      Message.display('error', error.message, resultArea);
+      return false;
     }
 
-    if (largeNumbers.length > 0) {
-      renderConfirmationArea(
-        {
-          inputName,
-          inputArray,
-          resultArea,
-        },
-        fn
-      );
-    } else {
-      calculateAndDisplay(
-        {
-          inputName,
-          inputArray,
-          resultArea,
-        },
-        fn
-      );
-    }
-  }
-}
+    const valuesToCheckLimit =
+      sectionID === 'generate-first-n-primes'
+        ? [getNumberToCalculate(inputValuesArray[0])]
+        : inputValuesArray;
 
-const handleInputChangeV2 = (elementSelector, fn) => {
-  let inputArray = [];
-  let inputName = undefined;
+    const action = hasLargeNumber(valuesToCheckLimit)
+      ? renderConfirmationArea
+      : calculateAndDisplay;
 
-  // if (Array.isArray(elementSelector)) {
-  //   elementSelector.forEach(element => {
-  //     inputArray.push(getInputValue(element));
-  //   });
-
-  //   /** @type {string} - The name attribute of the input tag,
-  //    *    corresponding to the action being performed. In case there are more than
-  //    *    one input for the same action, each name attribute must have a '-something'
-  //    *    at the end to differentiate each input
-  //    */
-  //   inputName = $(elementSelector[0]).attr('name').split(/-\w*$/)[0];
-  // } else {
-  //   inputArray.push(getInputValue(elementSelector));
-  //   inputName = $(elementSelector).attr('name');
-  // }
-
-  inputIterator = $(`${elementSelector} input`);
-
-  let resultArea = $(`p[id*="${inputName}"].js-result`);
-
-  if (inputArray.some(value => value === '')) {
-    resultArea.slideUp('slow');
-    togglePeriod($(`span[id*="${inputName}"]`), '.');
-  } else {
-    let largeNumbers = inputArray.filter(value => value >= LIMIT);
-
-    if (inputName === 'generate-first-n-primes') {
-      let digits = (inputArray[0] + '').length;
-      let factor = 3 * 2 ** (digits - 1);
-      let numberToCalculate = inputArray[0] * factor;
-      if (numberToCalculate >= LIMIT) {
-        largeNumbers.push(inputArray[0]);
-      }
-    }
-
-    if (largeNumbers.length > 0) {
-      renderConfirmationArea(
-        {
-          inputName,
-          inputArray,
-          resultArea,
-        },
-        fn
-      );
-    } else {
-      calculateAndDisplay(
-        {
-          inputName,
-          inputArray,
-          resultArea,
-        },
-        fn
-      );
-    }
+    action(
+      {
+        sectionID,
+        inputValuesArray,
+      },
+      fn
+    );
   }
 };
 
@@ -308,7 +228,6 @@ function handleInputInput(
 }
 
 const primalityCheck = (number, resultArea) => {
-  number = validateInput(number);
   let result = cachedPrimes(number).isPrime;
 
   let msg = `${number} `;
@@ -323,40 +242,28 @@ const primalityCheck = (number, resultArea) => {
   return msg;
 };
 
-const generateListOfPrimes = (from, to) => {
-  from = validateInput(from);
-  to = validateInput(to);
+const generateListOfPrimes = (from, to) =>
+  primeNumbersListBetween(from, to).join(' ');
 
-  return primeNumbersListBetween(from, to).join(' ');
-};
+const listFirstNPrimes = number => firstNPrimes(number).join(' ');
 
-const listFirstNPrimes = number => {
-  number = validateInput(number);
-
-  return firstNPrimes(number).join(' ');
-};
-
-function initKeydownEvent(inputs) {
-  inputs.forEach((handler, elementID) => {
-    $(elementID).keydown(event => {
-      const [callback, target] = Array.isArray(handler)
-        ? handler
-        : [handler, event.target];
-
+const initKeydownEvent = inputs => {
+  inputs.forEach((handler, sectionID) => {
+    $(`#${sectionID} input`).keydown(event => {
       if (['Enter', 'Tab'].includes(event.key)) {
-        handleInputChange(target, callback);
+        handleInputChange(sectionID, handler);
       }
     });
   });
-}
+};
 
-function initInputEvent(inputs) {
+const initInputEvent = inputs => {
   for (const elementID of inputs.keys()) {
-    $(`${elementID} input`).on('input', event => {
+    $(`#${elementID} input`).on('input', event => {
       handleInputInput(event.target);
     });
   }
-}
+};
 
 const initInputs = inputs => {
   initKeydownEvent(inputs);
@@ -365,20 +272,14 @@ const initInputs = inputs => {
 
 const start = () => {
   /**
-   * @type {Map.<string, Function|Array[Function, Array[string]]}
-   * keys -> ID of the element to attach the eventListener
-   * values -> A callback or an Array: [callback, inputIDs[]]
+   * @type {Map.<string, Function>}
+   * keys -> ID of the <section> element corresponding to a operation
+   * values -> A callback funtion wich performs the operation
    */
   const inputs = new Map([
-    ['#verify-number', primalityCheck],
-    [
-      '#generate-list',
-      [
-        generateListOfPrimes,
-        ['#generate-list-from-input', '#generate-list-to-input'],
-      ],
-    ],
-    ['#generate-first-n-primes', listFirstNPrimes],
+    ['verify-number', primalityCheck],
+    ['generate-list', generateListOfPrimes],
+    ['generate-first-n-primes', listFirstNPrimes],
   ]);
 
   initInputs(inputs);
