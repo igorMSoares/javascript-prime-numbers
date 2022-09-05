@@ -250,7 +250,7 @@ function handleInputInput(
 }
 
 const primalityCheck = (number, resultArea) => {
-  let result = cachedPrimes(number).isPrime;
+  let result = number <= 1 ? false : cachedPrimes(number).isPrime;
 
   let msg = `${number} `;
   if (result === false) {
@@ -269,27 +269,20 @@ const generateListOfPrimes = (from, to) =>
 
 const listFirstNPrimes = number => firstNPrimes(number).join(' ');
 
-const initKeydownEvent = inputs => {
+const initInputs = inputs => {
   inputs.forEach((handler, sectionID) => {
-    $(`#${sectionID} input`).keydown(event => {
+    let element = $(`#${sectionID} input`);
+
+    element.keydown(event => {
       if (['Enter', 'Tab'].includes(event.key)) {
         handleInputChange(sectionID, handler);
       }
     });
-  });
-};
 
-const initInputEvent = inputs => {
-  for (const elementID of inputs.keys()) {
-    $(`#${elementID} input`).on('input', event => {
+    element.on('input', event => {
       handleInputInput(event.target);
     });
-  }
-};
-
-const initInputs = inputs => {
-  initKeydownEvent(inputs);
-  initInputEvent(inputs);
+  });
 };
 
 const closeResult = sectionID => {
@@ -315,7 +308,7 @@ const toggleResult = sectionID => {
 };
 
 const initIcons = () => {
-  $('.icon').on('click', event => {
+  $('.icon').click(event => {
     const icon = $(event.target).is('use')
       ? $(event.target).parent()
       : $(event.target);
