@@ -91,7 +91,7 @@ const toggleIcons = (sectionID, action) => {
 function renderConfirmationArea(params, fn) {
   const sectionID = params.sectionID;
 
-  $(`#${sectionID} .js-result`).text('').slideUp('slow');
+  $(`#${sectionID} .js-result`).empty().slideUp('slow');
   $(`#${sectionID} input`).prop('disabled', true);
   toggleIcons(sectionID, 'hide');
 
@@ -259,17 +259,15 @@ const listFirstNPrimes = number => firstNPrimes(number).join(' ');
 
 const initInputs = inputs => {
   inputs.forEach((handler, sectionID) => {
-    let element = $(`#${sectionID} input`);
-
-    element.keydown(event => {
-      if (['Enter', 'Tab'].includes(event.key)) {
-        handleInputChange(sectionID, handler);
-      }
-    });
-
-    element.on('input', event => {
-      handleInputInput($(event.target));
-    });
+    $(`#${sectionID} input`)
+      .keydown(event => {
+        if (['Enter', 'Tab'].includes(event.key)) {
+          handleInputChange(sectionID, handler);
+        }
+      })
+      .on('input', event => {
+        handleInputInput($(event.target));
+      });
   });
 };
 
@@ -304,6 +302,7 @@ const toggleResult = sectionID => {
 
 const initIcons = () => {
   $('.icon').click(event => {
+    /** Sometimes the event will be trigged by the child element <use> */
     const icon = $(event.target).is('use')
       ? $(event.target).parent()
       : $(event.target);
