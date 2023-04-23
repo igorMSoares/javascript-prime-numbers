@@ -136,11 +136,13 @@ function isValidNumber(number) {
 
   if (typeof number !== 'number') {
     message = `Argument should be a number. Current type: ${typeof number}`;
-    throw new TypeError(message);
-  } else if (!Number.isInteger(number) || number < 0) {
+    throw new InvalidArgumentError(message);
+  }
+  if (!Number.isInteger(number) || number < 0) {
     message = `Only positive integers are allowed. Current value: ${number}`;
     throw new InvalidArgumentError(message);
-  } else if (number > limit) {
+  }
+  if (number > limit) {
     message = `Number too large. Only numbers less than or equal to ${limit} are allowed`;
     throw new InvalidArgumentError(message);
   }
@@ -149,7 +151,7 @@ function isValidNumber(number) {
 }
 
 // module.exports = {
-//   InvalidArgumentException,
+//   InvalidArgumentError,
 //   isValidNumber,
 //   testPrimality,
 //   primeNumbersUpTo,
@@ -169,7 +171,7 @@ export {
 
 function verifyPrimeNumber(number, upTo = null, outputType = 'string') {
   if (!['array', 'string'].includes(outputType)) {
-    throw new InvalidArgumentException(
+    throw new InvalidArgumentError(
       'Invalid outputType: choose "array" or "string"'
     );
   }
@@ -186,7 +188,7 @@ function verifyPrimeNumber(number, upTo = null, outputType = 'string') {
       }
     }
     if (!validate(upTo)[0]) {
-      throw new InvalidArgumentException(validate(upTo)['message']);
+      throw new InvalidArgumentError(validate(upTo)['message']);
     }
 
     var generatingListOfPrimes = true;
@@ -240,7 +242,7 @@ function verifyPrimeNumber(number, upTo = null, outputType = 'string') {
 
 function verificaNumeroPrimo(num) {
   if (!validate(num)[0]) {
-    throw new InvalidArgumentException(validate(num)['message']);
+    throw new InvalidArgumentError(validate(num)['message']);
   }
 
   var simPrimo = `O número ${num} é primo.`;
@@ -251,15 +253,15 @@ function verificaNumeroPrimo(num) {
 
 function generatePrimeNumbersList(from, to, outputType = 'string') {
   if (!['array', 'string'].includes(outputType)) {
-    throw new InvalidArgumentException(
+    throw new InvalidArgumentError(
       'Invalid outputType: choose "array" or "string"'
     );
   }
   if (!validate(from)[0]) {
-    throw new InvalidArgumentException(validate(from)['message']);
+    throw new InvalidArgumentError(validate(from)['message']);
   }
   if (!validate(to)[0]) {
-    throw new InvalidArgumentException(validate(to)['message']);
+    throw new InvalidArgumentError(validate(to)['message']);
   }
   if (from > to) {
     let tmp = from;
