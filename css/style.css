@@ -146,6 +146,16 @@ input:focus {
 ::-webkit-scrollbar-thumb {
   background: var(--scrollbar-color);
 }
+/* Remove input arrows for Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+/* Remove input arrows for Firefox */
+input[type='number'] {
+  -moz-appearance: textfield;
+}
 
 .listResult {
   word-spacing: 0.5em;
