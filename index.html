@@ -28,87 +28,98 @@
 
     <main>
       <section id="verify-number" class="wrapper">
-        <p>
-          <label for="verify-number-input">
-            Verificar se
-            <input
-              id="verify-number-input"
-              type="number"
-              placeholder="número"
-            />
-            é primo
-          </label>
-        </p>
+        <div class="section-header__wrapper">
+          <p>
+            <label for="verify-number-input">
+              Verificar se
+              <input
+                id="verify-number-input"
+                type="number"
+                placeholder="número"
+              />
+              é primo
+            </label>
+          </p>
 
-        <div class="icons-wrapper" style="display: none">
-          <span class="icon-spacer">
-            <svg class="icon" type="toggle">
-              <use xlink:href="#collapse"></use>
-            </svg>
-          </span>
-          <span class="icon-spacer">
-            <svg class="icon" type="close"><use xlink:href="#close"></use></svg
-          ></span>
+          <div class="icons-wrapper" style="display: none">
+            <span class="icon-spacer">
+              <svg class="icon" type="toggle">
+                <use xlink:href="#collapse"></use>
+              </svg>
+            </span>
+            <span class="icon-spacer">
+              <svg class="icon" type="close">
+                <use xlink:href="#close"></use></svg
+            ></span>
+          </div>
         </div>
 
         <p class="js-result" style="display: none"></p>
       </section>
       <section id="generate-list" class="wrapper">
-        <p>
-          <label for="generate-list-from-input">
-            Gerar uma lista de números primos entre
-            <input
-              id="generate-list-from-input"
-              class="generate-list-input"
-              type="number"
-              placeholder="início"
-            />
-          </label>
-          <label for="generate-list-to-input">
-            e
-            <input
-              id="generate-list-to-input"
-              class="generate-list-input"
-              type="number"
-              placeholder="fim"
-            />
-          </label>
-        </p>
-        <div class="icons-wrapper" style="display: none">
-          <span class="icon-spacer">
-            <svg class="icon" type="toggle">
-              <use xlink:href="#collapse"></use>
-            </svg>
-          </span>
+        <div class="section-header__wrapper">
+          <p>
+            <label for="generate-list-from-input">
+              Gerar uma lista de números primos entre
+              <input
+                id="generate-list-from-input"
+                class="generate-list-input"
+                type="number"
+                placeholder="início"
+              />
+            </label>
+            <label for="generate-list-to-input">
+              e
+              <input
+                id="generate-list-to-input"
+                class="generate-list-input"
+                type="number"
+                placeholder="fim"
+              />
+            </label>
+          </p>
+          <div class="icons-wrapper" style="display: none">
+            <span class="icon-spacer">
+              <svg class="icon" type="toggle">
+                <use xlink:href="#collapse"></use>
+              </svg>
+            </span>
 
-          <span class="icon-spacer">
-            <svg class="icon" type="close"><use xlink:href="#close"></use></svg>
-          </span>
+            <span class="icon-spacer">
+              <svg class="icon" type="close">
+                <use xlink:href="#close"></use>
+              </svg>
+            </span>
+          </div>
         </div>
         <p class="js-result listResult" style="display: none"></p>
       </section>
       <section id="generate-first-n-primes" class="wrapper">
-        <p>
-          <label for="generate-first-n-primes-input">
-            Listar os primeiros
-            <input
-              type="number"
-              class="generate-list-input"
-              id="generate-first-n-primes-input"
-              placeholder="N"
-            />
-            números primos
-          </label>
-        </p>
-        <div class="icons-wrapper" style="display: none">
-          <span class="icon-spacer">
-            <svg class="icon" type="toggle">
-              <use xlink:href="#collapse"></use>
-            </svg>
-          </span>
-          <span class="icon-spacer">
-            <svg class="icon" type="close"><use xlink:href="#close"></use></svg>
-          </span>
+        <div class="section-header__wrapper">
+          <p>
+            <label for="generate-first-n-primes-input">
+              Listar os primeiros
+              <input
+                type="number"
+                class="generate-list-input"
+                id="generate-first-n-primes-input"
+                placeholder="N"
+              />
+              números primos
+            </label>
+          </p>
+          <div class="icons-wrapper" style="display: none">
+            <span class="icon-spacer">
+              <svg class="icon" type="toggle">
+                <use xlink:href="#collapse"></use>
+              </svg>
+            </span>
+            <span class="icon-spacer">
+              <svg class="icon" type="close">
+                <use xlink:href="#close"></use>
+              </svg>
+            </span>
+          </div>
         </div>
         <p class="js-result listResult" style="display: none"></p>
       </section>

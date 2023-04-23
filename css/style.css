@@ -63,14 +63,10 @@ p {
   text-align: center;
 }
 
-.wrapper p:first-child {
-  margin: 0 3.5rem;
-}
-
 section.wrapper {
   border: 1px solid lightgray;
   width: fit-content;
-  padding: clamp(0.5rem, 1%, 1rem);
+  padding: clamp(0.5rem, 2vh, 1rem);
   border-radius: 5px;
   margin-bottom: 1rem;
   display: flex;
@@ -81,6 +77,12 @@ section.wrapper {
 
 section.wrapper:last-child {
   margin-bottom: 0;
+}
+
+.section-header__wrapper {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  width: 100%;
 }
 
 input {
@@ -210,9 +212,8 @@ input[type='number'] {
 .icons-wrapper {
   display: flex;
   align-items: center;
-  align-self: end;
-  position: absolute;
-  height: 1.5em;
+  height: 1.5rem;
+  margin-left: 0.75rem;
 }
 
 .icon {
