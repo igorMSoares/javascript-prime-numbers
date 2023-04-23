@@ -1,48 +1,32 @@
-const expect = require('chai').expect;
-const assert = require('assert');
-const {
+import { expect } from 'chai';
+import { strict as assert } from 'assert';
+import {
   isValidNumber,
   InvalidArgumentError,
-  testPrimality,
   cachedPrimes,
   primeNumbersUpTo,
   primeNumbersListBetween,
   firstNPrimes,
-} = require('../primeNumbers');
+} from '../primeNumbers.js';
 
 describe('Prime number verifier and prime numbers list generator', () => {
-  describe('testPrimality', () => {
+  describe('cachedPrimes().isPrime', () => {
     it('should verify if a given number is prime', () => {
-      assert.equal(testPrimality(2), true);
-      assert.equal(testPrimality(2, true).isPrime, true);
-      assert.equal(testPrimality(3), true);
-      assert.equal(testPrimality(3, true).isPrime, true);
-      assert.equal(testPrimality(5), true);
-      assert.equal(testPrimality(5, true).isPrime, true);
-      assert.equal(testPrimality(7), true);
-      assert.equal(testPrimality(7, true).isPrime, true);
-      assert.equal(testPrimality(11), true);
-      assert.equal(testPrimality(11, true).isPrime, true);
-      assert.equal(testPrimality(59), true);
-      assert.equal(testPrimality(59, true).isPrime, true);
-      assert.equal(testPrimality(71), true);
-      assert.equal(testPrimality(71, true).isPrime, true);
-      assert.equal(testPrimality(149), true);
-      assert.equal(testPrimality(149, true).isPrime, true);
-      assert.equal(testPrimality(9), false);
-      assert.equal(testPrimality(9, true).isPrime, false);
-      assert.equal(testPrimality(4), false);
-      assert.equal(testPrimality(4, true).isPrime, false);
-      assert.equal(testPrimality(50), false);
-      assert.equal(testPrimality(50, true).isPrime, false);
-      assert.equal(testPrimality(55), false);
-      assert.equal(testPrimality(55, true).isPrime, false);
-      assert.equal(testPrimality(33), false);
-      assert.equal(testPrimality(33, true).isPrime, false);
-      assert.equal(testPrimality(21), false);
-      assert.equal(testPrimality(21, true).isPrime, false);
-      assert.equal(testPrimality(79), true);
-      assert.equal(testPrimality(79, true).isPrime, true);
+      assert.equal(cachedPrimes(2).isPrime, true);
+      assert.equal(cachedPrimes(3).isPrime, true);
+      assert.equal(cachedPrimes(5).isPrime, true);
+      assert.equal(cachedPrimes(7).isPrime, true);
+      assert.equal(cachedPrimes(11).isPrime, true);
+      assert.equal(cachedPrimes(59).isPrime, true);
+      assert.equal(cachedPrimes(71).isPrime, true);
+      assert.equal(cachedPrimes(149).isPrime, true);
+      assert.equal(cachedPrimes(9).isPrime, false);
+      assert.equal(cachedPrimes(4).isPrime, false);
+      assert.equal(cachedPrimes(50).isPrime, false);
+      assert.equal(cachedPrimes(55).isPrime, false);
+      assert.equal(cachedPrimes(33).isPrime, false);
+      assert.equal(cachedPrimes(21).isPrime, false);
+      assert.equal(cachedPrimes(79).isPrime, true);
     });
   });
   describe('cachedPrimes', () => {

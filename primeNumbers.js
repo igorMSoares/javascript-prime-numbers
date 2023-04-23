@@ -1,5 +1,5 @@
 function multipleOf(num1, num2) {
-  return Math.max(num1, num2) % Math.min(num1, num2) === 0 ? true : false;
+  return Math.max(num1, num2) % Math.min(num1, num2) === 0;
 }
 
 const arrayToObject = array => {
@@ -149,16 +149,6 @@ function isValidNumber(number) {
 
   return true;
 }
-
-// module.exports = {
-//   InvalidArgumentError,
-//   isValidNumber,
-//   testPrimality,
-//   primeNumbersUpTo,
-//   cachedPrimes,
-//   primeNumbersListBetween,
-//   firstNPrimes,
-// };
 
 export {
   primeNumbersUpTo,
