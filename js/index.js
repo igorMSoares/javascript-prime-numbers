@@ -31,7 +31,6 @@ class Message {
       }
 
       const sectionID = messageArea.parent().attr('id');
-      togglePunctuationMark(sectionID, ':');
       toggleIcons(sectionID, 'hide');
 
       messageArea.slideDown('slow', async () => {
@@ -66,14 +65,6 @@ function validateInput(value, message = 'Digite um número inteiro positivo.') {
 
   return parsedValue;
 }
-
-const togglePunctuationMark = (sectionID, char) => {
-  const element = $(`span[id*="${sectionID}"]`);
-  const punctuationMark = element.text();
-  if (punctuationMark !== char) {
-    element.text(char);
-  }
-};
 
 const toggleIcons = (sectionID, action) => {
   const icons = $(`#${sectionID} .icons-wrapper`);
@@ -170,7 +161,6 @@ function calculateAndDisplay(params, fn) {
 
           resultArea.fadeOut(() => resultArea.text(msg).fadeIn('slow'));
 
-          togglePunctuationMark(sectionID, ':');
           toggleIcons(sectionID, 'show');
 
           resultArea.attr('value', params.inputValuesArray);
@@ -273,7 +263,6 @@ const initInputs = inputs => {
 
 const cleanResultArea = sectionID => {
   const resultArea = $(`#${sectionID} .js-result`);
-  togglePunctuationMark(sectionID, '.');
   toggleIcons(sectionID, 'hide');
   resultArea.slideUp('slow', () =>
     resultArea.empty().removeClass('msg success error')
