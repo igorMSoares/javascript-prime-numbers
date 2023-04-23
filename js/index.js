@@ -250,11 +250,7 @@ const listFirstNPrimes = number => firstNPrimes(number).join(' ');
 const initInputs = inputs => {
   inputs.forEach((handler, sectionID) => {
     $(`#${sectionID} input`)
-      .keydown(event => {
-        if (['Enter', 'Tab'].includes(event.key)) {
-          handleInputChange(sectionID, handler);
-        }
-      })
+      .on('change', _ => handleInputChange(sectionID, handler))
       .on('input', event => {
         handleInputInput($(event.target));
       });
